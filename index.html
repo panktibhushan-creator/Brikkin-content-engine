@@ -1,0 +1,1564 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Dr. Neha's Audit</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a copy chief's desk. Masthead + tabs, then a two-column bench: the copy on the left, the proof report on the right. */
+:root{
+  --paper:#F4F5F2; --sheet:#FFFFFF; --ink:#13203A; --ink-2:#4A5568; --rule:#D8DCD6;
+  --accent:#1D3A6E; --accent-ink:#FFFFFF;
+  --proof:#C2142D; --proof-bg:#FBE4E7; --amber:#9A5B00; --amber-bg:#FCEFD6; --ok:#1F6F43; --ok-bg:#DFF1E6;
+  --chip:#E9ECE6;
+  --f-display:"Libre Caslon Display", "Libre Caslon Text", Georgia, serif;
+  --f-copy:"Libre Caslon Text", Georgia, "Times New Roman", serif;
+  --f-ui:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#10151F; --sheet:#171E2B; --ink:#E7EAF0; --ink-2:#A3ACBC; --rule:#2B3445;
+  --accent:#8FB0EC; --accent-ink:#0E1626;
+  --proof:#FF7487; --proof-bg:#3A1820; --amber:#F2B65A; --amber-bg:#3A2A10; --ok:#6FD39A; --ok-bg:#12301F;
+  --chip:#232C3B; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#10151F; --sheet:#171E2B; --ink:#E7EAF0; --ink-2:#A3ACBC; --rule:#2B3445;
+  --accent:#8FB0EC; --accent-ink:#0E1626;
+  --proof:#FF7487; --proof-bg:#3A1820; --amber:#F2B65A; --amber-bg:#3A2A10; --ok:#6FD39A; --ok-bg:#12301F;
+  --chip:#232C3B; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.5;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+.wrap{max-width:1240px;margin:0 auto}
+header.mast{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;padding-block:28px 14px;border-bottom:2px solid var(--ink)}
+.mast h1{font-family:var(--f-display);font-weight:400;font-size:clamp(34px,5vw,52px);line-height:1;margin:0;letter-spacing:-.01em}
+.mast p{margin:6px 0 0;color:var(--ink-2);max-width:62ch}
+.status{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);display:flex;gap:8px;align-items:center}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ink-2)}
+.dot.on{background:var(--ok)}
+nav.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--rule);margin-bottom:20px}
+nav.tabs button{font:600 13px var(--f-ui);letter-spacing:.06em;text-transform:uppercase;background:none;border:0;border-bottom:3px solid transparent;color:var(--ink-2);padding:12px 14px 9px;cursor:pointer}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--proof)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.bench{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:24px;align-items:start}
+@media (max-width:900px){.bench{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:20px;min-width:0}
+.panel h2{font-family:var(--f-display);font-weight:400;font-size:26px;margin:0 0 4px}
+.panel h3{font:700 12px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:22px 0 8px}
+.lede{color:var(--ink-2);margin:0 0 16px;font-size:14px}
+label{display:block;font:600 12px var(--f-ui);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2);margin:14px 0 6px}
+label.inline{text-transform:none;letter-spacing:0;font-weight:500;margin:0;display:flex;gap:6px;align-items:center;font-size:13px}
+input[type=text],select,textarea{width:100%;font:15px var(--f-ui);color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:3px;padding:9px 10px}
+textarea{font-family:var(--f-copy);font-size:15px;line-height:1.6;resize:vertical;min-height:120px}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0 12px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;align-items:center}
+.btn{font:600 14px var(--f-ui);border:1px solid var(--ink);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:3px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.small{padding:6px 10px;font-size:12.5px}
+.btn.gold{background:var(--ok);border-color:var(--ok);color:var(--sheet)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.seg{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));border:1.5px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:14px}
+.seg button{font:600 14px var(--f-ui);padding:12px 10px;border:0;background:transparent;color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.seg button small{font-weight:400;font-size:12px;color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.seg button[aria-pressed="true"] small{color:var(--paper);opacity:.8}
+.note{font-size:13px;color:var(--ink-2)}
+.setup{border:1.5px solid var(--ink);border-radius:4px;padding:4px 14px 14px;margin-top:16px;background:var(--paper)}
+.setup h3{margin:12px 0 2px;color:var(--ink)}
+.lenseg{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--ink);border-radius:3px;overflow:hidden}
+.lenseg button{font:600 14px var(--f-ui);padding:9px 4px;border:0;border-right:1px solid var(--rule);background:var(--sheet);color:var(--ink);cursor:pointer}
+.lenseg button:last-child{border-right:0}
+.lenseg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.setline{font:500 13px var(--f-ui);color:var(--ink);background:var(--chip);border-radius:3px;padding:8px 10px;margin:0 0 10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.setline button{border:0;background:none;color:var(--accent);font:600 13px var(--f-ui);cursor:pointer;text-decoration:underline;padding:0}
+.shots td{font-size:13.5px}
+.cscript{font-family:var(--f-copy);line-height:1.6;background:var(--paper);border-left:3px solid var(--ok);padding:10px 8px;border-radius:0 3px 3px 0}
+.cl{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:none;border:0;border-radius:3px;padding:3px 8px;cursor:pointer;white-space:pre-wrap;word-break:break-word}
+.cl:hover{background:var(--chip)}
+.cl.has{background:var(--amber-bg);box-shadow:inset 3px 0 0 var(--amber)}
+.cl.chg{background:var(--ok-bg);box-shadow:inset 3px 0 0 var(--ok)}
+.cl.gap{height:12px;padding:0;cursor:default}
+.cnote{display:flex;gap:8px;align-items:flex-start;margin:2px 0 8px 16px;font:13px var(--f-ui);color:var(--amber)}
+.cedit{margin:4px 0 10px 16px;display:grid;gap:6px}
+.cedit textarea{min-height:60px;font:14px var(--f-ui)}
+.cbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.proofsheet{font-family:var(--f-copy);font-size:15px;line-height:1.75;white-space:pre-wrap;word-break:break-word;background:var(--paper);border:1px dashed var(--rule);padding:14px;border-radius:3px;max-height:340px;overflow:auto}
+mark{background:none;color:inherit;padding:0 1px;border-radius:2px}
+mark.b{color:var(--proof);background:var(--proof-bg);text-decoration:line-through;text-decoration-thickness:1.5px}
+mark.f{color:var(--proof);background:var(--proof-bg);text-decoration:underline;text-decoration-style:double;text-underline-offset:3px}
+mark.m{color:var(--amber);background:var(--amber-bg);text-decoration:underline wavy;text-underline-offset:3px}
+.tally{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
+.pill{font:600 12px var(--f-ui);padding:4px 9px;border-radius:999px;background:var(--chip);color:var(--ink);display:inline-flex;gap:6px;align-items:center}
+.pill.b{background:var(--proof-bg);color:var(--proof)}
+.pill.m{background:var(--amber-bg);color:var(--amber)}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:13px var(--f-ui);background:var(--chip);padding:3px 9px;border-radius:3px}
+.chip.b{background:var(--proof-bg);color:var(--proof)}
+.chip.m{background:var(--amber-bg);color:var(--amber)}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}
+.chip button{border:0;background:none;color:inherit;cursor:pointer;margin-left:4px;font-size:13px}
+.empty{border:1px dashed var(--rule);border-radius:4px;padding:28px 20px;color:var(--ink-2)}
+.empty strong{display:block;color:var(--ink);font-family:var(--f-display);font-weight:400;font-size:22px;margin-bottom:4px}
+.stamp{display:inline-block;font:700 14px var(--f-mono);letter-spacing:.12em;padding:6px 12px;border:2.5px solid currentColor;transform:rotate(-3deg);border-radius:3px}
+.stamp.ship{color:var(--ok)} .stamp.revise{color:var(--amber)} .stamp.rewrite{color:var(--proof)}
+.verdict{display:flex;gap:20px;align-items:center;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid var(--rule)}
+.score{font-family:var(--f-display);font-size:56px;line-height:1;font-variant-numeric:tabular-nums}
+.score small{font-size:18px;color:var(--ink-2)}
+.verdict p{margin:0;flex:1 1 260px;font-family:var(--f-copy)}
+.revise-cta{display:flex;gap:14px;align-items:center;flex-wrap:wrap;background:var(--ok-bg);border-radius:4px;padding:14px 16px;margin:16px 0 4px}
+.revise-cta p{margin:0;flex:1 1 240px;font-size:14px;color:var(--ink)}
+.fbbox{background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:2px 14px 14px;margin-top:12px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+.tw{overflow-x:auto}
+th,td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font:600 11.5px var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+td.n{font-family:var(--f-mono);white-space:nowrap;font-variant-numeric:tabular-nums}
+td .gap{display:block;color:var(--proof);font-size:13px;margin-top:3px}
+.bar{height:6px;background:var(--chip);border-radius:3px;min-width:60px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.bar i.lo{background:var(--proof)} .bar i.mid{background:var(--amber)} .bar i.hi{background:var(--ok)}
+.pf{font:700 12px var(--f-mono)}
+.pf.y{color:var(--ok)} .pf.n{color:var(--proof)}
+.fix{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;font-size:14px;padding:8px 0;border-bottom:1px solid var(--rule)}
+.fix .was{color:var(--proof)} .fix .now{color:var(--ok)}
+.fix .why{grid-column:1/-1;color:var(--ink-2);font-size:13px}
+.copyblock{font-family:var(--f-copy);white-space:pre-wrap;line-height:1.7;background:var(--paper);border-left:3px solid var(--ok);padding:14px 16px;border-radius:0 3px 3px 0;word-break:break-word}
+.reasons{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.reasons li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;font-size:14px}
+.tag{font:600 10.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:2px;background:var(--chip);height:fit-content;white-space:nowrap}
+.tag.high{background:var(--proof-bg);color:var(--proof)} .tag.medium{background:var(--amber-bg);color:var(--amber)} .tag.low{background:var(--ok-bg);color:var(--ok)}
+.fail{border-left:3px solid var(--proof);padding:2px 0 2px 12px;display:grid;gap:4px}
+.fail q{font-family:var(--f-copy);font-style:italic;color:var(--ink-2)}
+.fail q::before,.fail q::after{content:'"'}
+.dropstrip{display:flex;gap:3px;margin:6px 0 10px}
+.dropstrip div{flex:1;min-width:0;padding:8px 6px;border-radius:3px;font:600 11px var(--f-mono);text-align:center}
+.dropstrip .high{background:var(--proof-bg);color:var(--proof)} .dropstrip .medium{background:var(--amber-bg);color:var(--amber)} .dropstrip .low{background:var(--ok-bg);color:var(--ok)}
+.thoughts{display:grid;gap:6px;font-size:14px;margin:0;padding:0;list-style:none}
+.thoughts li{display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px}
+.thoughts li span:first-child{font:12px var(--f-mono);color:var(--ink-2)}
+.rounds{display:grid;gap:6px;margin:0 0 16px;padding:0;list-style:none}
+.rounds li{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:8px 12px;background:var(--paper);border-radius:3px;font-size:14px}
+.rounds b{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.banner{padding:14px 16px;border-radius:4px;margin-bottom:16px;font-size:15px}
+.banner.win{background:var(--ok-bg);color:var(--ok)}
+.banner.short{background:var(--amber-bg);color:var(--amber)}
+.timeline{display:flex;height:34px;border:1px solid var(--rule);border-radius:3px;overflow:hidden;font:600 10.5px var(--f-ui);letter-spacing:.03em}
+.timeline span{display:flex;align-items:center;justify-content:center;border-right:1px solid var(--rule);text-align:center;padding:0 2px;overflow:hidden;white-space:nowrap}
+.timeline span:nth-child(odd){background:var(--chip)}
+.tlabels{display:flex;font:11px var(--f-mono);color:var(--ink-2)}
+.tlabels span{overflow:hidden}
+.card{border:1px solid var(--rule);border-radius:4px;padding:18px;background:var(--sheet);margin-bottom:16px;min-width:0}
+.card header{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start}
+.card h4{font-family:var(--f-display);font-weight:400;font-size:24px;margin:0;text-wrap:balance}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.hooks{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0}
+.hooks div{background:var(--paper);padding:10px;border-radius:3px;font-size:14px;min-width:0}
+.hooks b{display:block;font:600 11px var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);margin-bottom:3px}
+.headline-big{font-family:var(--f-display);font-size:30px;line-height:1.1}
+.slides{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.slide{aspect-ratio:4/5;max-width:100%;background:var(--paper);border:1px solid var(--rule);border-radius:3px;padding:12px;display:flex;flex-direction:column;gap:6px;overflow:auto}
+.slide .r{font:600 10.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--proof)}
+.slide .h{font-family:var(--f-display);font-size:19px;line-height:1.15}
+.slide .bd{font-family:var(--f-copy);font-size:13px}
+.slide .v{font-size:12px;color:var(--ink-2);margin-top:auto}
+.persona-list{display:grid;gap:8px}
+.persona-item{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px 12px;border:1px solid var(--rule);border-radius:3px;cursor:pointer;background:var(--paper)}
+.persona-item[aria-current="true"]{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+pre.json{font:12.5px/1.55 var(--f-mono);background:var(--paper);border:1px solid var(--rule);padding:12px;border-radius:3px;max-height:460px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+.thinking{font-family:var(--f-mono);font-size:13px;color:var(--ink-2);display:flex;gap:10px;align-items:center;padding:14px 0}
+.spin{width:14px;height:14px;border:2px solid var(--rule);border-top-color:var(--proof);border-radius:50%;animation:sp 0.9s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.spin{animation:none}}
+.err{color:var(--proof);font-size:14px;margin-top:10px}
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.pillar{border-top:2px solid var(--ink);padding-top:10px}
+.pillar b{font-family:var(--f-display);font-weight:400;font-size:19px;display:block}
+.pillar p{margin:4px 0 0;font-size:14px;color:var(--ink-2)}
+.ex{font:600 10.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;background:var(--amber-bg);color:var(--amber);padding:2px 6px;border-radius:2px;vertical-align:middle}
+.skillbar{background:var(--sheet);border:1.5px solid var(--ink);border-radius:4px;margin:0 0 20px}
+.skillbar summary{list-style:none;cursor:pointer;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding:12px 16px}
+.skillbar summary::-webkit-details-marker{display:none}
+.skillbar .sk-title{font:700 12px var(--f-ui);letter-spacing:.08em;text-transform:uppercase}
+.skillbar #skSum{flex:1 1 180px;min-width:0}
+.skillbar[open] .sk-open{background:var(--ink);color:var(--paper)}
+.skillbar .sk-body{padding:0 16px 16px;border-top:1px solid var(--rule)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:3px;font-size:14px;z-index:20;max-width:calc(100% - 32px)}
+</style>
+
+<div class="wrap">
+<header class="mast">
+  <div>
+    <h1>Dr. Neha's Audit</h1>
+    <p>Audit, diagnose and revise reels, carousels and campaigns against Meta's ranking signals, your viral reel framework, banned words, format bans and a machine-language detector.</p>
+  </div>
+  <div class="status"><span class="dot" id="aiDot"></span><span id="aiState">Connecting to Claude…</span></div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" aria-selected="true" data-tab="audit">Audit &amp; revise</button>
+  <button role="tab" aria-selected="false" data-tab="write">Write</button>
+  <button role="tab" aria-selected="false" data-tab="persona">Personas</button>
+  <button role="tab" aria-selected="false" data-tab="rules" id="rulesTab" hidden>Rulebook</button>
+</nav>
+<details class="skillbar" id="skillsPanel">
+  <summary><span class="sk-title">Skills</span><span class="note" id="skSum">None switched on</span><span class="btn ghost small sk-open">Add or manage skills</span></summary>
+  <div class="sk-body">
+    <p class="note" style="margin:0 0 4px">Attach a skill (a SKILL.md, a .skill file or pasted instructions). Every switched-on skill is followed in audits, revisions, line fixes, shot lists, scripts, campaigns and festive copies. Banned words, format bans, no new facts and the moodboard 10-line limit still apply. Your skills are saved to your account, private to you.</p>
+    <div class="row">
+      <div><label for="skFile">Attach file</label><input type="file" id="skFile" accept=".md,.txt,.skill,.zip,text/markdown,text/plain,application/zip"></div>
+      <div><label for="skName">Skill name</label><input type="text" id="skName"></div>
+    </div>
+    <label for="skBody">Or paste the skill instructions</label>
+    <textarea id="skBody" rows="5" style="font-family:var(--f-mono);font-size:13px;min-height:100px" placeholder="Paste the SKILL.md text here"></textarea>
+    <div class="actions"><button type="button" class="btn small" id="skAdd">Add skill</button><span class="note" id="skMsg"></span></div>
+    <h3>Your skills</h3>
+    <div class="persona-list" id="skList"></div>
+  </div>
+</details>
+
+<!-- AUDIT -->
+<section id="audit" role="tabpanel">
+  <div class="bench">
+    <div class="panel">
+      <div class="seg" role="group" aria-label="Audit mode">
+        <button id="amScript" aria-pressed="true">Script audit<small>Reels, carousels, posts</small></button>
+        <button id="amCamp" aria-pressed="false">Campaign audit<small>OOH, launch, ad campaigns</small></button>
+      </div>
+      <h2 id="aHead">The script</h2>
+      <p class="lede" id="aLede">Paste a reel script, carousel or post. Banned words, format bans and machine language are marked as you type.</p>
+      <div class="row">
+        <div id="aTypeWrap"><label for="aType">What is it</label>
+          <select id="aType"><option>Reel script</option><option>Moodboard script</option><option>Carousel</option><option>Caption / post</option><option>Idea or concept note</option></select></div>
+        <div id="aCTypeWrap" hidden><label for="aCType">Campaign type</label>
+          <select id="aCType"><option>OOH / hoarding campaign</option><option>360 launch campaign</option><option>Digital ad campaign</option><option>Campaign idea / route</option></select></div>
+        <div><label for="aGoal">Goal</label><select id="aGoal"><option>shares</option><option>followers</option><option>leads</option><option>authority</option><option>site visits</option></select></div>
+      </div>
+      <div class="row">
+        <div><label for="aPersona">Persona / brand voice</label><select id="aPersona"></select></div>
+        <div><label for="aScope">First audit also suggests</label>
+          <select id="aScope"><option value="none">Diagnosis only</option><option value="hook">A new hook / headline</option><option value="concept">A stronger concept</option><option value="full">A full revision</option></select></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:8px"><label for="aText">Copy</label><button type="button" class="btn ghost small" id="aClear">Clear</button></div>
+      <textarea id="aText" rows="12" placeholder="Paste your script here"></textarea>
+      <label for="aBrief" id="aBriefLabel">Context (project, audience, platform)</label>
+      <input type="text" id="aBrief">
+      <div id="aSetupWrap" class="setup"><h3>Production setup</h3><p class="note" style="margin:0 0 4px">Set this before you revise. The audit and every revision write for this length, cast and production.</p><div data-setup></div></div>
+      <h3>Proof marks</h3>
+      <div class="proofsheet" id="aProof"></div>
+      <div class="tally" id="aTally"></div>
+      <div class="actions">
+        <button class="btn" id="aRun">Audit script</button>
+        <label class="inline"><input type="checkbox" id="aDeep"> Deep review (slower)</label>
+      </div>
+    </div>
+    <div class="panel" id="aReport">
+      <div class="empty"><strong>The proof report lands here</strong>Set the production setup on the left first. You get a verdict stamp, the reasons it will not work, where viewers drop off, scores on every parameter with what is missing for a 10, and every banned or machine-sounding line with a fix. Then press <b>Revise to 10/10</b>.</div>
+    </div>
+  </div>
+</section>
+
+<!-- WRITE -->
+<section id="write" role="tabpanel" hidden>
+  <div class="bench">
+    <div class="panel">
+      <div class="seg" role="group" aria-label="Write mode">
+        <button id="wmScript" aria-pressed="true">Write scripts<small>Reels and carousels</small></button>
+        <button id="wmCamp" aria-pressed="false">Write campaigns<small>OOH and launch routes</small></button>
+        <button id="wmFest" aria-pressed="false">Festive copies<small>Greetings in your brand voice</small></button>
+      </div>
+      <div id="wScriptFields">
+        <div class="row">
+          <div><label for="wKind">Make</label><select id="wKind"><option value="reel">Reel scripts</option><option value="moodboard">Moodboard scripts</option><option value="carousel">Carousels</option><option value="both">Both, equal split</option></select></div>
+          <div><label for="wCount">How many</label><select id="wCount"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>6</option></select></div>
+        </div>
+        <div class="row">
+          <div><label for="wPlatform">Platform</label><select id="wPlatform"><option>Instagram Reels</option><option>YouTube Shorts</option><option>LinkedIn</option></select></div>
+          <div><label for="wPillar">Pillar</label><select id="wPillar"><option value="auto">Pick the best fit</option><option value="personal">Personal</option><option value="educational">Educational</option><option value="transformation_lead_gen">Transformation / lead gen</option><option value="trend_jacking">Trend jacking</option><option value="entertainment">Entertainment</option><option value="authority_thought_leadership">Authority / thought leadership</option></select></div>
+        </div>
+        <div class="setup"><h3>Production setup</h3><p class="note" style="margin:0 0 4px">Shared with the Audit tab.</p><div data-setup></div></div>
+      </div>
+      <div id="wCampFields" hidden>
+        <div class="row">
+          <div><label for="wRoutes">Campaign routes</label><select id="wRoutes"><option>1</option><option selected>2</option><option>3</option></select></div>
+          <div><label for="wMarket">Micromarket</label><input type="text" id="wMarket"></div>
+        </div>
+        <label>Media</label>
+        <div class="chips" id="wMedia">
+          <label class="inline chip"><input type="checkbox" value="Hoardings and unipoles" checked> Hoardings</label>
+          <label class="inline chip"><input type="checkbox" value="Metro and transit" checked> Metro / transit</label>
+          <label class="inline chip"><input type="checkbox" value="Digital and social ads" checked> Digital / social</label>
+          <label class="inline chip"><input type="checkbox" value="Print"> Print</label>
+          <label class="inline chip"><input type="checkbox" value="Site experience and on-ground"> On-ground</label>
+        </div>
+      </div>
+      <div id="wFestFields" hidden>
+        <div class="row">
+          <div><label for="fFest">Festival or occasion</label><select id="fFest">
+            <option>Diwali</option><option>Dussehra / Navratri</option><option>Ganesh Chaturthi</option><option>Karnataka Rajyotsava</option><option>Christmas</option><option>New Year</option><option>Makar Sankranti / Pongal</option><option>Republic Day</option><option>Holi</option><option>Ugadi / Gudi Padwa</option><option>Eid</option><option>Akshaya Tritiya</option><option>Independence Day</option><option>Onam</option><option>Raksha Bandhan</option><option>Mother's Day</option><option>Father's Day</option><option value="other">Other (type it)</option>
+          </select></div>
+          <div id="fOtherWrap" hidden><label for="fOther">Occasion name</label><input type="text" id="fOther"></div>
+          <div><label for="fCount">Options per format</label><select id="fCount"><option>1</option><option selected>2</option><option>3</option></select></div>
+        </div>
+        <label>Copy formats</label>
+        <div class="chips" id="fFormats">
+          <label class="inline chip"><input type="checkbox" value="Social post (static creative headline, sub line and caption)" checked> Social post</label>
+          <label class="inline chip"><input type="checkbox" value="Reel script"> Reel script</label>
+          <label class="inline chip"><input type="checkbox" value="Carousel (5 slides)"> Carousel</label>
+          <label class="inline chip"><input type="checkbox" value="WhatsApp greeting to customers" checked> WhatsApp</label>
+          <label class="inline chip"><input type="checkbox" value="Hoarding / OOH (headline of 4 words or fewer, plus support line)"> Hoarding</label>
+          <label class="inline chip"><input type="checkbox" value="Email or SMS greeting"> Email / SMS</label>
+        </div>
+        <div class="row">
+          <div><label for="fIntent">Purpose</label><select id="fIntent"><option value="greeting">Pure greeting, no selling</option><option value="soft">Greeting with a soft brand mention</option><option value="offer">Festive offer or launch tie-in</option></select></div>
+          <div><label for="fLang">Language</label><select id="fLang"><option>English</option><option>Hinglish</option><option>English with a line in Kannada</option><option>Kannada</option><option>Hindi</option></select></div>
+        </div>
+        <div class="setup" style="margin-top:14px">
+          <h3>Brand persona <span class="chip b" style="font-size:11px;letter-spacing:.04em">Required</span></h3>
+          <p class="note" style="margin:0 0 4px">Every festive copy is written in this voice. Pick a saved persona, paste one, or both.</p>
+          <label for="fPersonaSel">Saved persona</label><select id="fPersonaSel"></select>
+          <label for="fPersona">Or describe the brand persona</label>
+          <textarea id="fPersona" rows="5" style="min-height:100px;font-family:var(--f-ui);font-size:14px" placeholder="Who the brand is, how it speaks, what it never says, who it talks to"></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <div><label for="wNiche" id="wNicheLabel">Niche</label><input type="text" id="wNiche"></div>
+        <div><label for="wTopic" id="wTopicLabel">Topic</label><input type="text" id="wTopic"></div>
+      </div>
+      <label for="wAudience">Target audience</label>
+      <input type="text" id="wAudience">
+      <div class="row">
+        <div><label for="wGoal">Goal</label><select id="wGoal"><option>shares</option><option>followers</option><option>leads</option><option>authority</option><option>site visits</option></select></div>
+        <div id="wPersonaWrap"><label for="wPersona">Persona / brand voice</label><select id="wPersona"></select></div>
+      </div>
+      <label for="wCta">CTA</label>
+      <input type="text" id="wCta">
+      <label for="wExtra" id="wExtraLabel">Anything else (existing content to revise, facts, project data)</label>
+      <textarea id="wExtra" rows="5" placeholder="Paste existing scripts here to get revised versions instead of new ones."></textarea>
+      <div class="actions">
+        <button class="btn" id="wRun">Write scripts</button>
+        <label class="inline"><input type="checkbox" id="wDeep"> Deep mode</label>
+      </div>
+    </div>
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+        <h2 style="margin:0">Drafts</h2>
+        <button class="btn ghost small" id="wCsv" disabled>Export content sheet (CSV)</button>
+      </div>
+      <div id="wList"><div class="empty"><strong>No drafts yet</strong>Fill the brief and press Write. Scripts come with hook layers, timestamped beats, triggers and reasoning. Campaigns come with the insight, the core idea, headlines of four words or fewer, value propositions and media executions. Festive copies come in your brand persona, one block per format, ready to copy.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PERSONA -->
+<section id="persona" role="tabpanel" hidden>
+  <div class="bench">
+    <div class="panel">
+      <h2>Study a voice</h2>
+      <p class="lede">Add a client, influencer or brand. Paste their YouTube links plus the transcripts or captions. This page cannot open YouTube itself, so the transcript is what gets studied. On YouTube, open the video, tap <b>More</b>, then <b>Show transcript</b>, and copy it.</p>
+      <div class="row">
+        <div><label for="pName">Name</label><input type="text" id="pName"></div>
+        <div><label for="pKind">Who they are</label><select id="pKind"><option>Influencer / creator</option><option>Client / founder</option><option>Brand</option></select></div>
+      </div>
+      <label for="pLinks">YouTube links (one per line)</label>
+      <textarea id="pLinks" rows="3" style="font-family:var(--f-mono);font-size:13px;min-height:70px"></textarea>
+      <label for="pTx">Transcripts, captions or sample posts</label>
+      <textarea id="pTx" rows="9" placeholder="Paste 2-5 transcripts for a reliable read. More material, sharper persona."></textarea>
+      <label for="pNotes">Your notes (energy, what they never say, audience)</label>
+      <input type="text" id="pNotes">
+      <div class="actions"><button class="btn" id="pRun">Build persona</button><button class="btn ghost" id="pImport">Import JSON</button></div>
+      <div id="pImportBox" hidden>
+        <label for="pImportText">Paste persona JSON</label>
+        <textarea id="pImportText" rows="6" style="font-family:var(--f-mono);font-size:12.5px"></textarea>
+        <div class="actions"><button class="btn small" id="pImportGo">Save persona</button></div>
+      </div>
+      <h3>Saved personas</h3>
+      <div class="persona-list" id="pList"></div>
+      <p class="note" id="pStoreNote"></p>
+    </div>
+    <div class="panel" id="pView"></div>
+  </div>
+</section>
+
+<!-- RULES -->
+<section id="rules" role="tabpanel" hidden>
+  <div class="panel" style="margin-bottom:24px">
+    <h2 id="tlHead">Reel structure</h2>
+    <p class="lede">Every reel is checked beat by beat against the length chosen in the production setup. Carousels follow the same order slide by slide.</p>
+    <div class="timeline" id="tl"></div>
+    <div class="tlabels" id="tll"></div>
+    <h3>Carousel order</h3>
+    <div class="chips" id="carOrder"></div>
+    <h3>Campaign stages</h3>
+    <div class="chips" id="campOrder"></div>
+  </div>
+  <div class="panel" style="margin-bottom:24px">
+    <h2>Hook pillars</h2>
+    <p class="lede">Every hook must fire one of these, stacked with a second trigger. Pick one in the production setup or let it choose.</p>
+    <div class="pillars" id="hookPillars"></div>
+    <h3>What travels in Indian real estate</h3>
+    <div class="copyblock" id="indiaPlay" style="border-left-color:var(--accent)"></div>
+  </div>
+  <div class="panel" style="margin-bottom:24px">
+    <h2>Meta ranking signals</h2>
+    <p class="lede">Every reel and carousel is scored 0 to 10 on each. Based on what Instagram has said it ranks on (watch time, likes per reach, sends per reach) plus saves, rewatches, originality and the clarity and coherence that drive them.</p>
+    <div class="pillars" id="pillars"></div>
+  </div>
+  <div class="bench">
+    <div class="panel">
+      <h2>Banned words</h2>
+      <p class="lede">Struck through in red. Add your own; they apply across every audit and draft.</p>
+      <div class="actions" style="margin-top:0"><input type="text" id="bAdd" placeholder="Add a word or phrase" style="flex:1 1 200px"><button class="btn small" id="bAddGo">Ban it</button></div>
+      <h3>Format bans</h3>
+      <div class="chips"><span class="chip b">Em dash —</span><span class="chip b">Spaced en dash –</span><span class="chip b">All contractions: I'll, I'm, I've, I'd, you're, we'll, they've, it's, that's, let's, don't, can't, won't, isn't…</span></div>
+      <div id="bCats"></div>
+    </div>
+    <div class="panel">
+      <h2>Machine language</h2>
+      <p class="lede">Underlined in amber. Words and sentence shapes that make copy read as written by software or by committee.</p>
+      <div id="mCats"></div>
+    </div>
+  </div>
+</section>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ---------- Rulebook data ---------- */
+const BANNED = {
+  "Puffery and superlatives": ["iconic","unparalleled","unmatched","unrivalled","unrivaled","unbeatable","best-in-class","best in class","world-class","world class","finest","the best","No. 1","number one","ultimate","pinnacle","epitome","second to none","one of a kind","one-of-a-kind","extraordinary","exceptional","incomparable","matchless","peerless","landmark","masterpiece","revolutionary","first-ever","never before","like never before"],
+  "Luxury cliches": ["luxury","luxurious","ultra-luxury","ultra luxury","premium","ultra-premium","high-end","opulent","opulence","lavish","grand","majestic","regal","royal","elite","exclusive","prestigious","sophisticated","sophistication","classy","elegant","elegance","bespoke","signature","curated","handcrafted luxury","affordable luxury","five-star","5-star","resort-style","resort style"],
+  "Brochure filler": ["dream home","home of your dreams","lifestyle","modern amenities","world-class amenities","state-of-the-art","state of the art","spacious","sprawling","serene","tranquil","tranquility","nestled","oasis","haven","paradise","sanctuary","abode","breathtaking","stunning","spectacular","magnificent","mesmerizing","mesmerising","aspirational","contemporary","thoughtfully designed","meticulously crafted","crafted with care","timeless","perfect blend","harmony with nature","in the lap of nature","greenery all around","urban jungle","plush","top-notch","unique","one stop"],
+  "Category words": ["flat","flats","flat-buyers","flat buyers"],
+  "Location cliches": ["prime location","strategically located","centrally located","close proximity","in close proximity","minutes away","just minutes from","well-connected","well connected","excellent connectivity","seamless connectivity","heart of the city","upcoming hub","rapidly developing"],
+  "Price and urgency (compliance risk)": ["cheapest","lowest price","lowest prices","best price","best deal","unbelievable price","throwaway price","value for money","hurry","last few units","limited period","limited time offer","once-in-a-lifetime","once in a lifetime","don't miss","book now","act now","guaranteed","guaranteed returns","assured returns","assured","100% returns","sure-shot","sure shot","risk-free","risk free","appreciation guaranteed","double your money","investment of a lifetime","pre-launch offer"]
+};
+const MACHINE_WORDS = {
+  "Software words": ["delve","delve into","tapestry","testament to","a testament","embark","embark on","unlock","unleash","unveil","elevate","elevated","elevating","seamless","seamlessly","harness","leverage","synergy","robust","cutting-edge","cutting edge","game-changer","game changer","revolutionize","revolutionise","transformative","paradigm","realm","landscape","symphony","beacon","foster","empower","empowering","holistic","navigate","navigating","journey","meticulous","meticulously","myriad","a myriad of","plethora","boasts","redefine","redefining","reimagine","reimagined","next-level","next level","immersive","vibrant","bustling","nuanced","pivotal","crucial","intricate","ever-evolving","dynamic"],
+  "Filler phrases": ["in today's fast-paced world","in today's world","in the ever-evolving","in this day and age","it is important to note","it is worth noting","let us dive in","dive into","deep dive","look no further","the secret sauce","here is the thing","picture this","imagine a world","at the end of the day","without further ado","in conclusion","to sum up","moreover","furthermore","additionally","not only that","rest assured","whether you are a","when it comes to","in the world of","take it to the next level","stand out from the crowd","rise above","the possibilities are endless","so much more","and much more"]
+};
+const MACHINE_PATTERNS = [
+  {re:/\bnot just [^.!?\n]{1,40}?[,;]+\s*(it is|it's|but)\b/gi, why:"'Not just X, it is Y' framing"},
+  {re:/\bit(?: i|')s not (just )?about [^.!?\n]{1,40}?[,;]+\s*it(?: i|')s about\b/gi, why:"'It is not about X, it is about Y' framing"},
+  {re:/\bwhether you(?: a|')re [^.!?\n]{1,50}? or\b/gi, why:"'Whether you are X or Y' opener"},
+  {re:/\b(more than just|is not just|are not just|isn't just|aren't just) a\b/gi, why:"'More than just a…' cliché"},
+  {re:/\b(\w+), (\w+),? and (\w+) (living|spaces|homes|experience)\b/gi, why:"Rule-of-three adjective stack"},
+  {re:/(?:(?<=^|[.!?]\s+)[\w₹%,]{1,12}[.!?](?:\s+|$)){3,}/gm, why:"Choppy fragments. Three one-word sentences in a row reads broken. Write a full sentence."}
+];
+/* Format bans: em dashes, spaced en dashes, every contraction (possessives stay allowed) */
+const FORMAT_PATTERNS = [
+  {re:/—/g, why:"Em dash. Use a full stop or a comma."},
+  {re:/\s–\s/g, why:"En dash used as a dash. Use a full stop or a comma."},
+  {re:/\b[A-Za-z]+n['’]t\b/g, why:"Contraction. Write it in full (do not, cannot, will not)."},
+  {re:/\b(?:I|you|we|they|he|she|it|that|there|here|what|who|where|when|why|how|let|this|everyone|nobody|somebody|someone|y)['’](?:ll|re|ve|d|m|s|all)\b/gi, why:"Contraction. Write it in full (I will, you are, it is, let us)."},
+  {re:/\b[A-Za-z]+['’](?:ll|re|ve)\b/g, why:"Contraction. Write it in full."},
+  {re:/\b(?:gonna|wanna|gotta|kinda|sorta|ain't)\b/gi, why:"Slang contraction. Write it in full."}
+];
+const SIGNALS = [
+  {id:"hold", name:"3-second hold", test:"Does the first frame and first line stop a thumb? Text, voice and visual all fire in the first 3 seconds."},
+  {id:"watch_time", name:"Watch time and completion", test:"Does every second earn the next one? No slow intro, no dead air, the open loop pays off at the end. For carousels: does every slide earn the next swipe?"},
+  {id:"rewatch", name:"Rewatch and loop", test:"Does the ending connect back to the opening or reward a second watch?"},
+  {id:"sends", name:"Sends per reach", test:"Would someone DM this to one specific person? The strongest signal for reaching non-followers."},
+  {id:"saves", name:"Saves", test:"Is there a framework, checklist or number worth coming back to?"},
+  {id:"likes_comments", name:"Likes and real comments per reach", test:"Does it trigger agreement, debate or a genuine reply? No engagement bait like 'like if you agree' or 'tag 3 friends'."},
+  {id:"originality", name:"Originality", test:"An original idea and original footage. No reposted clips, no watermarks from other apps."},
+  {id:"clarity", name:"Clarity, sound off", test:"Understood in one watch, with the sound off, by someone new to the topic."},
+  {id:"coherence", name:"Coherence", test:"One idea, one thread. The voiceover reads as one continuous talk and every line follows from the one before."},
+  {id:"niche_fit", name:"Niche and audience signal", test:"Clearly about one topic for one audience, so the system knows who to show it to."}
+];
+const BEATS = [
+  {k:"hook", name:"Hook", t:"0-3s", s:0, e:3, job:"Pattern break that challenges a belief, breaks an ego, triggers an emotion or creates tension."},
+  {k:"lock", name:"Lock-in", t:"3-10s", s:3, e:10, job:"Curiosity gap: the problem, tension or promise, with the answer held back."},
+  {k:"body1", name:"Body 1", t:"10-15s", s:10, e:15, job:"Escalate relatability and land the first major reveal. Strongest dopamine moment."},
+  {k:"rehook", name:"Re-hook", t:"15-20s", s:15, e:20, job:"Second layer of tension, a contradiction or an unexpected angle."},
+  {k:"body2", name:"Body 2", t:"20-25s", s:20, e:25, job:"The actionable insight, framework, example or solution."},
+  {k:"rehook2", name:"Re-hook 2", t:"25-27s", s:25, e:27, job:"One final unexpected insight or twist that reinforces the core message."},
+  {k:"close", name:"Close + CTA + loop", t:"27-30s", s:27, e:30, job:"Memorable takeaway, natural CTA, ending that connects back to the opening for a rewatch."}
+];
+const CAROUSEL_ORDER = ["Hook","Curiosity / lock-in","Reveal","Re-hook","Actionable value","Final insight","CTA"];
+const CAMP_STAGES = [
+  {name:"Consumer insight", job:"A true, specific tension the buyer feels that competitors ignore."},
+  {name:"Core idea", job:"One single-minded thought that can run for years and across media."},
+  {name:"Headline (4 words max)", job:"Readable in 3 seconds at 40 km/h. Says the idea, not the category."},
+  {name:"Clarity (no confusion)", job:"Anyone who sees it once can say what it means and who it is for in one line. No double meanings, no puzzles, no mixed messages across media."},
+  {name:"Differentiator vs micromarket", job:"Something only this project can claim within a 10 km radius."},
+  {name:"Proof and reasons to believe", job:"Facts, numbers, demonstrations that make the claim believable."},
+  {name:"Value propositions", job:"Community, Legacy, Growth, Price appreciation, each said specifically."},
+  {name:"Media executions", job:"Each medium used for what it does best; the idea survives every format."},
+  {name:"CTA and compliance", job:"A clear next step, RERA number, no unverifiable or guaranteed claims."}
+];
+const CAMP_RULES = ["Not confusing: a passerby can repeat the message in one line after one look","One single-minded message per execution","Headline of 4 words or fewer","Readable in 3 seconds at road speed","A differentiator only this project can claim in the micromarket","Brand and project name linked at first glance","The idea extends across at least 3 media","No banned words, no machine language, no em dashes, no contractions","RERA number present and every claim verifiable"];
+const FRAMEWORK = {"content_pillars":{"personal":["experiences","stories","failures","achievements","journey"],"educational":["teaching","guiding","tips","hacks","steps"],"transformation_lead_gen":["case studies","CTA to comment"],"trend_jacking":["ride current trends, audios, news"],"entertainment":["humour","memes","skits"],"authority_thought_leadership":["bold opinions","industry predictions","debunking common advice","breakdowns","myths","what most people don't know"]},"attention_triggers":{"emotion":{"goal":"Make me FEEL something","levers":["fear","anger","excitement","awe","humor","hope","nostalgia","empathy","pride","desire"]},"curiosity":{"goal":"Make me WANT TO KNOW something","levers":["mystery","information gap","secret","question","prediction","open loop","suspense"]},"relevance":{"goal":"Make me think 'THIS IS ABOUT ME'","levers":["identity","relatability","pain","desire","profession","life stage","personal situation"]},"novelty":{"goal":"Make me think 'I'VE NEVER SEEN THIS BEFORE'","levers":["surprise","contradiction","unusualness","pattern interrupt","new information","unexpected perspective"]},"value":{"goal":"Make me think 'THIS WILL HELP ME'","levers":["utility","money","time","knowledge","solutions","hacks","frameworks","recommendations"]},"social_psychology":{"goal":"Make me think 'THIS MATTERS TO PEOPLE LIKE ME'","levers":["status","social proof","belonging","FOMO","controversy","tribal identity","recognition","shareability"]}},"hooks":{"layers":{"text_hook":"On-screen text in the first frame (max 8 words)","verbal_hook":"First spoken line (under 3 seconds)","visual_hook":"Movement, prop, location or pattern interrupt in the first frame"},"verbal_hook_types":{"relationship":"Ties the topic to a relationship (boss, partner, parents, friends)","celebrity":"Uses a famous person, brand or event as an entry point","fear_desire":"Plays on what they want to gain or avoid losing","shock_based":"A surprising statement or statistic","storytelling":"Opens mid-story","fact_based":"A specific, credible fact or number"}},"reel_formats":["Talking Head – long form & short form","Talking Head – Walking Shot","Short B-roll Reel – text hook + caption","Long B-roll Reel – montage of multiple B-rolls","Talking Head – Changing Frames","Talking Head – Pope in the Pool (doing something while speaking)","Reaction Reel – reaction + opinion","White Board","Podcast Hooks","Podcast Style Shoot","Rating Reels","This or That Reels","Problem vs Solution","Myth or Fact","True or False","Desktop Screen + Explaining","Q&A","Humour Reels","Skits / Character Play","Split Screen","Tutorial Reels"],"three_elements":{"information":"What they learn","emotion":"What they feel","entertainment":"Why they keep watching"},"tonality":{"serious":"Sounds like an expert","concerned":"Sounds like you actually care","loud_excited":"Grabs attention","casual":"Sounds authentic","angry":"Motivates or inspires the audience"},"virality_rules":["Stack at least 2 attention triggers per reel, ideally Curiosity + one other","Fire all 3 hook layers (text + verbal + visual) within the first 3 seconds","Every reel must contain all 3 elements: information, emotion, entertainment","Open a loop in the hook and close it only at the end","Change the visual every 2–4 seconds to keep retention up","Match the tone to the pillar: authority→serious, personal→casual/concerned, motivational→angry, entertainment→loud","End with a shareable line or a CTA tied to the goal ('Comment X', 'Send this to...')","One idea per reel and no filler"]};
+/* ---------- Production setup, lengths, hooks, India playbook ---------- */
+const BEATS_BY_LEN = {
+  15:[{name:"Hook",s:0,e:2,job:"The strongest line, in the chosen hook pillar."},{name:"Tension",s:2,e:6,job:"The problem or conflict, answer held back."},{name:"Reveal",s:6,e:12,job:"The payoff or twist, with the save asset."},{name:"Close + loop",s:12,e:15,job:"Line that loops to the hook, plus CTA."}],
+  30:BEATS.map(b=>({name:b.name,s:b.s,e:b.e,job:b.job})),
+  60:[{name:"Hook",s:0,e:3,job:"The strongest line, in the chosen hook pillar. Text, voice and first frame fire together."},{name:"Lock-in",s:3,e:8,job:"The stakes: what they lose or gain, answer held back."},{name:"Scene 1",s:8,e:20,job:"The conflict plays out; first reveal lands."},{name:"Re-hook",s:20,e:27,job:"A contradiction or 'but here is the catch' that resets attention."},{name:"Scene 2 / value",s:27,e:42,job:"The save asset: the number, formula or 3-point check, inside the scene."},{name:"Re-hook 2 / twist",s:42,e:52,job:"The unexpected turn that makes them rewatch or send it."},{name:"Close + CTA + loop",s:52,e:60,job:"Payoff line that loops to the hook, then the CTA."}],
+  90:[{name:"Hook",s:0,e:3,job:"The strongest line, in the chosen hook pillar."},{name:"Lock-in",s:3,e:10,job:"Stakes and the promise, answer held back."},{name:"Scene 1",s:10,e:25,job:"Conflict and first reveal."},{name:"Re-hook",s:25,e:35,job:"Contradiction or catch."},{name:"Scene 2 / value",s:35,e:55,job:"The save asset, shown not lectured."},{name:"Re-hook 2",s:55,e:68,job:"Second twist or escalation."},{name:"Scene 3 / proof",s:68,e:80,job:"Proof, consequence or emotional peak."},{name:"Close + CTA + loop",s:80,e:90,job:"Payoff that loops to the hook, then CTA."}]
+};
+const WORD_BUDGET = {15:38,30:75,60:150,90:220};
+const PRODUCTIONS = {
+  same:{label:"Same as my script", talent:"none"},
+  influencer:{label:"Influencer-led", talent:"influencers"},
+  actors:{label:"Actors / skit", talent:"actors"},
+  mixed:{label:"Influencer + actors", talent:"both"},
+  founder:{label:"Founder or sales head on camera", talent:"none"},
+  ai:{label:"AI production", talent:"actors"},
+  stock:{label:"Stock footage + voiceover", talent:"none"},
+  site:{label:"Site walkthrough + voiceover", talent:"none"}
+};
+const LANGS = ["Same as my script","English","Hinglish","Kannada + English","Tamil + English","Telugu + English","Hindi"];
+const HOOK_PILLARS = {
+  auto:"Pick the strongest for this idea",
+  emotional:"Emotional: the first line makes them feel something (pride, guilt, fear, nostalgia, longing). Parents, a first home, years of rent, a family moment.",
+  triggering:"Triggering: a bold call-out that sparks disagreement and real comments. It challenges a common belief, a buyer habit or an industry practice. Provocative but true, never defamatory, never naming a real competitor.",
+  curiosity:"Curiosity: an open loop or a withheld answer (guess the price, 'the one question nobody asks the builder'), paid off only at the end.",
+  fear_loss:"Fear of loss: loss aversion with a specific rupee, sq ft or time number they are losing right now.",
+  desire:"Desire and status: the life, the view, the address, said specifically, never as a brochure.",
+  shock:"Shock: one surprising, verifiable number or fact in the first line.",
+  relatable:"Relatable pain: the 'this is literally me' moment (traffic, 10-month deposit, water tankers, the broker who said 5 minutes from metro).",
+  story:"Story: open in the middle of a scene, mid-argument or mid-reveal.",
+  relationship:"Relationship: ties it to mummy, papa, spouse, in-laws, a boss or a friend."
+};
+const FORMATS = {
+  same:"Same as my script",auto:"Best fit for the cast",skit:"Skit with dialogue",pov:"POV scene",price_reveal:"Guess the price / price reveal",
+  myth_fact:"Myth vs fact",this_that:"This or that",red_flags:"Red flags / checklist countdown",before_after:"Before vs after",
+  reaction:"Reaction + opinion",comparison:"What ₹X gets you here vs there",talking_head:"Talking head to camera"
+};
+const INDIA_PLAYBOOK = `What travels in Indian real estate short-form (use the patterns, never copy anyone's lines):
+1. Guess the price / price reveal: show the home, make viewers guess, reveal at the end. Drives comments and rewatches.
+2. What ₹1 crore gets you in micromarket A vs B. Saved and sent between friends deciding where to buy.
+3. Family skits: buying a home in India is a family decision. Papa asks about resale and vastu, mummy checks the kitchen and puja space, in-laws compare with a cousin's home, the couple wants the balcony.
+4. Broker and brochure call-outs: '5 minutes from metro' that is 25 in traffic, super built-up vs carpet area, the floor-rise and PLC surprise.
+5. Rent vs EMI math with real numbers.
+6. Bengaluru pain: traffic, water tankers, power cuts, the 10-month rental deposit, landlords, the commute to ORR.
+7. POV first home: the emotional milestone, parents seeing the home, the gruhapravesha.
+8. Red flags / 3 checks before paying the token amount: the most saved format.
+9. Myth vs fact on RERA, OC, khata, BBMP vs BDA approvals, UDS.
+10. Before vs after: plot to possession, construction progress, a handover moment.
+Code-mixed language (Hinglish, Kannada + English) reads native; brochure English reads like an ad and gets skipped. A road name, a rupee figure and a minute count beat any adjective. Humour and conflict carry the information; information alone does not travel.`;
+const isMood=t=>/moodboard/i.test(t||"");
+const MOOD_MAX=10;
+const MOODBOARD_RULES=`MOODBOARD SCRIPT RULES (strict):
+- Maximum ${MOOD_MAX} lines in total, counting every line of copy. Never more. Fewer is fine.
+- Built in pairs: a HEADER line, then its SECONDARY line.
+- Each pair plugs in one project highlight. The HEADER says it first as an emotional angle: what it feels like or means for the buyer and family, no numbers or specs. The SECONDARY then states the same highlight directly as a tactical detail: the plain fact.
+- HEADER max 8 words. SECONDARY max 14 words.
+- Use only the project highlights given (or, if none, the facts in the original script). Never invent a highlight.
+- One mood and one story thread across every pair, so it reads as one film. End on the strongest pair.
+- No timestamps, no speaker labels, no visual direction, no notes.`;
+function moodLines(t){return String(t||"").split("\n").filter(l=>l.trim()).length}
+function highlightsBlock(st){const h=String(st.highlights||"").trim();if(!h)return "";
+  return `PROJECT HIGHLIGHTS (plug these in, using only what is written here):
+${h.split("\n").map(x=>x.trim()).filter(Boolean).map(x=>"- "+x).join("\n")}
+HOW TO PLUG THEM IN: each highlight appears first as an emotional angle in a header or hook line (the feeling, no numbers), then directly as a tactical detail in the secondary copy or a later line (the plain fact). Never add a highlight that is not on this list.`}
+const NO_NEW_FACTS = `NO NEW FACTS, STRICT: use only facts that are already in the original script, the context box or the project highlights. Never add prices, sq ft, carpet area, BHK counts, distances, minutes, RERA numbers, project or builder names, amenities, dates, statistics or claims that are not there. Never add [verify] placeholders. If a stronger line seems to need a fact that is missing, write the line without it. The save asset must come from what the script already says, or be a general tip with no project specifics.`;
+const GENRES = {
+  same:"Same as my script",
+  comedy:"Comedy: a funny premise built on a real buyer truth, a laugh every 5 to 8 seconds, exaggeration and a comic reveal. Timing over jokes.",
+  thriller:"Thriller / suspense: tension from the first line, a secret or ticking clock, cliffhanger re-hooks, a reveal that flips everything.",
+  drama:"Emotional drama: a real family moment, quiet tension, one line that lands in the chest. No melodrama.",
+  horror_comedy:"Horror comedy: a spooky setup (the house hunt from hell, the broker who vanishes) paid off with a real estate truth.",
+  romance:"Romance: a couple, a small conflict about the home, a sweet payoff.",
+  mystery:"Detective / mystery: someone investigates a claim like a case, with clues and a verdict.",
+  satire:"Satire / spoof: parody of a brochure, an ad, a news anchor or a broker pitch.",
+  nostalgia:"Nostalgia: then vs now, papa's 1998 decision, the old house, the memory that makes them send it to family.",
+  motivational:"Motivational: the struggle, the decision, the win. Earned, not preachy.",
+  game_show:"Game show / quiz: a host, contestants, rounds, guess the price, a reveal.",
+  heist:"Heist: a crew plans how to get the best unit, the plan, the twist.",
+  vox_pop:"Street interview / vox pop: quick answers from real-feeling people, the surprising answer last.",
+  documentary:"Real and raw: documentary style, one real person, no gags, honest detail.",
+  premium:"Premium: quiet confidence. Fewer words, slower pace, long pauses, one striking detail per line. Show quality through restraint and specifics (materials, light, space, silence), never by calling it premium or luxury.",
+  point_by_point:"Up to the point: crisp and direct. One point per line, no build-up, no scene setting, no jokes. Each line a clear fact or benefit the viewer can use.",
+  aspirational:"Aspirational: the life they are working towards. Paint the future self, the milestone, the pride of arriving. Warm, forward-looking, never boastful, and never using the word aspirational.",
+  flowery:"Flowery and poetic: rich imagery, rhythm, metaphor and sensory detail (light, breeze, sound, texture). Lyrical lines that still make sense on one listen. Use fresh images of your own, never brochure cliches or any banned word."
+};
+let SKILLS=lsGetEarly("vd_skills",[]);
+function skillsBlock(){const on=SKILLS.filter(k=>k.on);if(!on.length)return "";
+  return `\nCLIENT SKILLS (the client's own instructions; follow them closely. Where a skill conflicts with the default craft, structure or format above, the skill wins. Banned words, format bans, the no-new-facts rule and the moodboard ${MOOD_MAX}-line limit still apply):\n`+on.map(k=>`=== SKILL: ${k.name} ===\n${k.body.slice(0,30000)}`).join("\n\n")}
+const DEPTHS = {keep:"Keep my script, fix only what is flagged",sharpen:"Same idea and story, rewrite weak lines",rebuild:"New concept from scratch"};
+let SETUP = (()=>{const d={len:30,prod:"same",infl:1,actors:0,lang:"Same as my script",hook:"auto",format:"same",genre:"same",visuals:false,depth:"keep"};
+  const v2=lsGetEarly("vd_setup2",null);if(v2)return Object.assign(d,v2);
+  const old=lsGetEarly("vd_setup",{});for(const k of ["len","hook","visuals"])if(k in old)d[k]=old[k];return d})();
+function lsGetEarly(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function beatsFor(len){return BEATS_BY_LEN[len]||BEATS_BY_LEN[30]}
+function beatLine(len){return beatsFor(len).map(b=>`${b.s}-${b.e}s ${b.name}: ${b.job}`).join(" | ")}
+function castLine(st){
+  const p=PRODUCTIONS[st.prod]||PRODUCTIONS.influencer;
+  const bits=[p.label];
+  if(p.talent==="influencers"||p.talent==="both")bits.push(`${st.infl} influencer${st.infl>1?"s":""}`);
+  if(p.talent==="actors"||p.talent==="both")bits.push(`${st.actors} actor${st.actors===1?"":"s"}`);
+  return bits.join(" · ");
+}
+function setupSummary(st){return `${({keep:"Keep my script",sharpen:"Sharpen",rebuild:"New concept"})[st.depth]||"Keep my script"} · ${st.len}s · ${castLine(st)} · ${st.lang==="Same as my script"?"same language":st.lang} · ${st.hook==="auto"?"best hook":HOOK_PILLARS[st.hook].split(":")[0]+" hook"} · ${st.format==="same"?"same format":FORMATS[st.format]} · ${(st.genre||"same")==="same"?"same genre":GENRES[st.genre].split(":")[0]} · ${st.visuals?"with visuals":"script only"}`}
+function productionBlock(st,type){
+  const mood=isMood(type);
+  const p=st.prod, n=st.infl, a=st.actors;
+  const cast={
+    influencer:`${n} influencer${n>1?"s":""} on camera, labelled INFLUENCER 1${n>1?", INFLUENCER 2"+(n>2?", INFLUENCER 3":""):""}. ${n>1?"They talk to each other: questions, disagreement, banter, one catching the other out. Never alternating monologues.":"One creator, but staged as a scene: testing something, reacting, catching a broker out, revealing a price, walking into a room. Never a lecture to camera."}${a?` Plus ${a} actor${a>1?"s":""} labelled by character name.`:""}`,
+    actors:`A scripted scene with exactly ${a||2} actor${(a||2)>1?"s":""}, labelled by character name (for example RIYA, PAPA, BROKER). Dialogue only, short lines, each one moving the conflict forward: situation, conflict, twist, payoff. No narrator.`,
+    mixed:`${n} influencer${n>1?"s":""} (INFLUENCER 1${n>1?", INFLUENCER 2":""}) plus ${a||1} actor${(a||1)>1?"s":""} labelled by character name. The influencer drives the scene, the actors play the buyer, the parent, the broker or the landlord.`,
+    founder:"One founder or sales head on camera, labelled FOUNDER. Authority voice, but staged: a prop, a demo, a number on a whiteboard, a challenge to the viewer, a myth taken apart. Never a brochure read to camera.",
+    ai:`Made with AI video and AI voice, with ${a||1} character${(a||1)>1?"s":""} at most ${Math.max(a||1,1)}. Every beat is one simple shot with one action. Each spoken line under 12 words (lip-sync breaks on long lines). No real people, no real logos. Label lines by character or VO.`,
+    stock:"Built from stock footage plus a voiceover, labelled VO. Nobody speaks on camera. The VO tells it as a scene (second-person POV or a mini story), and on-screen text carries half the message so it works with the sound off. Do not depend on project-specific footage.",
+    same:"Keep exactly the cast, speakers, speaker names and production style of the original script. Do not add or remove people. (If there is no original script, pick the best cast for the idea.)",
+    site:"Shot at the project. One walking presenter labelled HOST, or VO only. Build it as a reveal sequence: the door opens, the view lands, the price drops at the end."
+  }[p]||"";
+  return `PRODUCTION SETUP (write for exactly this, nothing more):
+${mood?MOODBOARD_RULES:`- Length: ${st.len} seconds. Spoken word budget: about ${WORD_BUDGET[st.len]} words in total. Never exceed it by more than 10 percent.
+- Beats for ${st.len}s: ${beatLine(st.len)}
+- Cast and production: ${cast}`}
+- Language: ${st.lang==="Same as my script"?"the same language and language mix as the original script (if none, Hinglish)":st.lang}.${st.lang!=="English"?" Write it the way people actually speak it in Bengaluru, in Roman script. Keep English words where people use English.":""} The format bans still apply to every English word.
+- Hook pillar: ${HOOK_PILLARS[st.hook]}${st.hook!=="auto"?" Use this pillar for the hook, stacked with one more attention trigger.":""}
+- Format: ${st.format==="same"?"the same format as the original script":FORMATS[st.format]}.
+- Genre: ${(st.genre||"same")==="same"?"the same genre and tone as the original script":GENRES[st.genre]+" Keep the real estate point clear inside the genre."}
+- Visual direction: ${st.visuals&&!mood?"include one SHOT line per beat, 12 words max.":"OFF. Write no visual direction, no camera notes, no B-roll, no shot descriptions. Script only."}
+${highlightsBlock(st)}`;
+}
+const CRAFT = `SCRIPT CRAFT, MOST IMPORTANT:
+- One clear idea from hook to end. It must make complete sense on one watch.
+- It must NOT sound like someone explaining. No lecture, no monologue, no "let me tell you", no narrator walking through features. Dramatise it: a scene, a conflict, a test, a reveal, a reaction, a question that gets answered. The information rides inside the scene.
+- With 2 or more people, write real dialogue: they interrupt, disagree, catch each other out, react. With one person, give them a device (a guess, a challenge, a countdown, a reveal, a call-out).
+- The hook is the strongest line in the script and fires the chosen hook pillar. A viewer who sees only the first 2 seconds must feel something or need the answer.
+- Build one SAVE ASSET into the middle: a number, a formula or a 3-point check they will want later, made only from facts already in the script or the brief.
+- Build one SEND TRIGGER: a moment so specific to a person (the friend house hunting, the papa who wants a plot, the partner who wants the bigger balcony) that the viewer knows exactly who to send it to.
+- End on a line that loops back to the hook or lands a twist, then a CTA tied to the goal.
+- Short spoken lines, mostly under 12 words, in complete natural sentences. Never fragments like "Eleven. Minutes. Gone."
+- Stay inside the word budget. Cut every line that does not move the story.`;
+function formatSpec(st,isCarousel,type){
+  if(isMood(type))return `Write "revised" as plain text in exactly this layout and nothing else, ${MOOD_MAX} lines maximum in total:
+HEADER: <emotional angle of highlight 1>
+SECONDARY: <tactical detail of highlight 1>
+HEADER: <emotional angle of highlight 2>
+SECONDARY: <tactical detail of highlight 2>
+(up to 5 pairs; no blank lines, no other lines, no notes)`;
+  if(isCarousel)return `Write "revised" as plain text in exactly this layout:
+HOOK: <pillar> + <second trigger>
+Slide 1: <headline>
+<body, max 25 words>
+(repeat for 7 to 10 slides, following the carousel order)
+CAPTION: <one line>
+CTA: <one line>
+${st.visuals?"Under each slide add 'VISUAL: ...' in 12 words max.":"No visual direction."} No notes or explanations inside it.`;
+  return `Write "revised" as plain text in exactly this layout and nothing else:
+${st.len}s · <format> · <cast> · ${st.lang}
+HOOK: <pillar> + <second trigger>
+TEXT ON SCREEN: <first-frame text, max 8 words>
+
+[0-${beatsFor(st.len)[0].e}s] SPEAKER: line
+[..] SPEAKER: line
+(one timestamp per beat; several speaker lines may share a timestamp; add "ON SCREEN: ..." on its own line only where on-screen text adds something)
+${st.visuals?"SHOT: one line of max 12 words under each timestamp.\n":""}
+CAPTION: <one line>
+CTA: <one line>
+${st.visuals?"":"Do not write any visual direction, camera notes or shot lines. "}No notes, labels for beats, reasoning or explanations inside the script.`;
+}
+function spokenWords(text){
+  let n=0;
+  for(let line of String(text||"").split("\n")){
+    line=line.trim();if(!line)continue;
+    if(/^(HOOK|TEXT ON[- ]SCREEN|ON[- ]SCREEN|CAPTION|CTA|SHOT|VISUAL|HASHTAGS|Slide \d+)\b/i.test(line))continue;
+    if(/^\d+s\s*·/.test(line))continue;
+    line=line.replace(/^\[[^\]]*\]\s*/,"").replace(/^[A-Z][A-Z0-9 .'\-]{0,24}(\([^)]*\))?:\s*/,"");
+    n+=line.split(/\s+/).filter(w=>/[\p{L}\p{N}₹]/u.test(w)).length;
+  }
+  return n;
+}
+function lenCheck(text,st){const w=spokenWords(text),b=WORD_BUDGET[st.len]||75;return {w,b,over:w>Math.round(b*1.1),pill:`<span class="pill ${w>Math.round(b*1.1)?'b':'ok'}">${w} spoken words · budget ${b} for ${st.len}s</span>`}}
+const QUALITY = "Every piece must be share-worthy and save-worthy, not merely informative. Turn information into a framework, checklist, actionable takeaway, strong point of view, relatable insight or conversation-worthy idea. Give the audience a clear reason to stop, continue, learn, save, share or rewatch.";
+
+/* ---------- Utilities ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function toast(msg){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,2800)}
+async function copyText(txt){try{await navigator.clipboard.writeText(txt);toast("Copied")}catch(e){toast("Copy blocked here. Select the text and copy it manually.")}}
+function lsGet(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+let customBanned = lsGet("od_custom_banned", []);
+function allBanned(){const out=[];for(const [cat,ws] of Object.entries(BANNED))for(const w of ws)out.push({w,cat});for(const w of customBanned)out.push({w,cat:"Your additions"});return out}
+function allMachine(){const out=[];for(const [cat,ws] of Object.entries(MACHINE_WORDS))for(const w of ws)out.push({w,cat});return out}
+
+function scan(text){
+  text=String(text||"");const hits=[];
+  const add=(list,kind)=>{for(const {w,cat} of list){const re=new RegExp("(?<![\\w-])"+reEsc(w).replace(/\\ /g,"\\s+").replace(/'/g,"['’]")+"(?![\\w-])","gi");let m;while((m=re.exec(text))){hits.push({s:m.index,e:m.index+m[0].length,t:m[0],kind,cat})}}};
+  add(allBanned(),"b"); add(allMachine(),"m");
+  for(const p of MACHINE_PATTERNS){p.re.lastIndex=0;let m;while((m=p.re.exec(text))){hits.push({s:m.index,e:m.index+m[0].length,t:m[0],kind:"m",cat:p.why})}}
+  for(const p of FORMAT_PATTERNS){p.re.lastIndex=0;let m;while((m=p.re.exec(text))){hits.push({s:m.index,e:m.index+m[0].length,t:m[0],kind:"f",cat:p.why})}}
+  const rank={b:0,f:1,m:2};
+  hits.sort((a,b)=>a.s-b.s||(b.e-b.s)-(a.e-a.s)||rank[a.kind]-rank[b.kind]);
+  const kept=[];let end=-1;for(const h of hits){if(h.s>=end){kept.push(h);end=h.e}}
+  return {hits:kept};
+}
+const kindLabel={b:"Banned word",f:"Format ban",m:"Machine language"};
+function markHTML(text,hits){text=String(text||"");let out="",i=0;for(const h of hits){out+=esc(text.slice(i,h.s))+`<mark class="${h.kind}" title="${esc(kindLabel[h.kind]+': '+h.cat)}">${esc(text.slice(h.s,h.e))}</mark>`;i=h.e}return out+esc(text.slice(i))}
+function tallyHTML(r){
+  const n=k=>r.hits.filter(h=>h.kind===k).length;const b=n("b"),f=n("f"),m=n("m");
+  return (b?`<span class="pill b">${b} banned</span>`:`<span class="pill ok">No banned words</span>`)+
+    (f?`<span class="pill b">${f} format bans</span>`:`<span class="pill ok">No dashes or contractions</span>`)+
+    (m?`<span class="pill m">${m} machine-language</span>`:`<span class="pill ok">Reads human</span>`);
+}
+function hitList(r){return r.hits.map(h=>`${kindLabel[h.kind].toUpperCase()}: "${h.t}" (${h.cat})`).join("; ")}
+function scoreClass(v,max){const p=v/max;return p<.5?"lo":p<.8?"mid":"hi"}
+function spinner(el,label){el.innerHTML=`<div class="thinking"><span class="spin"></span><span class="tx">${esc(label)}</span><button class="btn ghost small">Stop</button></div>`;return el.querySelector("button")}
+
+/* ---------- Claude connection ---------- */
+let sample=null;
+const errCopy={not_granted:"Claude is not allowed on this page yet. Allow it when the prompt appears, or from the page's Permissions menu.",sampling_disabled:"Claude is not available for this account.",rate_limited:"Too many requests just now. Wait a minute and try again.",session_expired:"Your session expired. Sign in again and reload.",prompt_too_large:"That is too much text at once. Trim it and try again.",invalid_json:"Claude's answer could not be read. Press the button again.",refused:"Claude declined this one. Change the request and try again.",cancelled:"Stopped."};
+function errMsg(e){return errCopy[e?.code]||"Something went wrong reaching Claude. Try again."}
+(window.claude?claude.use("sample"):Promise.resolve(null)).then(s=>{sample=s;$("#aiDot").classList.toggle("on",!!s);$("#aiState").textContent=s?"Claude connected":"Open on claude.ai while signed in to use Claude. Local scanning still works.";});
+
+/* ask: returns parsed JSON or throws {code}. statusEl gets live progress text */
+async function askJSON(prompt,deep,ctl,onProgress){
+  if(!sample)throw {code:"sampling_disabled"};
+  return await sample.json(prompt,{modelTier:deep?"complex":"default",signal:ctl.signal,cache:false,onText:({text})=>onProgress&&onProgress(text.length)});
+}
+async function ask(prompt,deep,el,label){
+  const ctl=new AbortController();
+  spinner(el,label||"Thinking…").onclick=()=>ctl.abort();
+  try{return await askJSON(prompt,deep,ctl,n=>{const t=el.querySelector(".tx");if(t)t.textContent=`Writing… ${n.toLocaleString()} characters`})}
+  catch(e){el.innerHTML=`<p class="err">${esc(errMsg(e))}</p>`;return null}
+}
+
+/* ---------- Personas store ---------- */
+let personas=lsGet("od_personas",[]);let col=null;
+async function initStore(){
+  try{
+    if(!window.claude)throw 0;
+    const [db,user]=await Promise.all([claude.use("db"),claude.use("user")]);
+    const uid=user&&await user.id();
+    if(!db||!uid)throw 0;
+    col=db.collection("data/users/"+uid);
+    const snap=await col.get();
+    const fromDb=[];
+    for(const d of snap.docs){const v=d.data();if(d.id==="settings"){if(Array.isArray(v?.banned))customBanned=v.banned}else if(d.id==="skills"){if(Array.isArray(v?.skills)&&v.skills.length)SKILLS=v.skills}else if(v?.persona)fromDb.push(v.persona)}
+    const ids=new Set(fromDb.map(p=>p.id));
+    for(const p of personas)if(!ids.has(p.id)){fromDb.push(p);col.doc(p.id).set({persona:p}).catch(()=>{})}
+    personas=fromDb;
+    $("#pStoreNote").textContent="Saved to your account, private to you.";
+  }catch(e){col=null;$("#pStoreNote").textContent="Saved in this browser only.";}
+  lsSet("od_personas",personas);lsSet("od_custom_banned",customBanned);
+  lsSet("vd_skills",SKILLS);renderSkills();renderSetups();
+  renderPersonaSelects();renderPersonaList();renderBanned();rescanAudit();
+}
+async function savePersona(p){
+  p.id=p.id&&p.id!=="example"?p.id:"p_"+Date.now().toString(36);
+  delete p.example;
+  const i=personas.findIndex(x=>x.id===p.id);if(i>=0)personas[i]=p;else personas.unshift(p);
+  lsSet("od_personas",personas);
+  if(col){try{await col.doc(p.id).set({persona:p})}catch(e){toast("Saved in this browser; account save failed.")}}
+  renderPersonaSelects();renderPersonaList();return p;
+}
+async function deletePersona(id){
+  personas=personas.filter(p=>p.id!==id);lsSet("od_personas",personas);
+  if(col){try{await col.doc(id).delete()}catch(e){}}
+  renderPersonaSelects();renderPersonaList();showPersona(personas[0]||null);
+}
+async function saveSettings(){lsSet("od_custom_banned",customBanned);if(col){try{await col.doc("settings").set({banned:customBanned})}catch(e){}}}
+function personaById(id){return personas.find(p=>p.id===id)||null}
+function renderPersonaSelects(){
+  for(const sel of [$("#aPersona"),$("#wPersona"),$("#fPersonaSel")]){const cur=sel.value;sel.innerHTML=`<option value="">${sel.id==="fPersonaSel"?(personas.length?"Choose a saved persona":"No saved personas yet"):"No persona (brand-neutral)"}</option>`+personas.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");if([...sel.options].some(o=>o.value===cur))sel.value=cur}
+}
+let currentPersonaId=null;
+function renderPersonaList(){
+  const list=personas;if(!list.length){$("#pList").innerHTML='<p class="note" style="margin:0">No personas yet. Build one above or import JSON.</p>';return}
+  $("#pList").innerHTML=list.map(p=>`<div class="persona-item" tabindex="0" data-id="${esc(p.id)}" aria-current="${p.id===currentPersonaId}"><span>${esc(p.name)} ${p.example?'<span class="ex">Example</span>':''}</span><span class="note">${esc(p.type||"")}</span></div>`).join("");
+  $("#pList").querySelectorAll(".persona-item").forEach(el=>{const go=()=>showPersona(personaById(el.dataset.id));el.onclick=go;el.onkeydown=e=>{if(e.key==="Enter")go()}});
+}
+function showPersona(p){
+  if(!p){currentPersonaId=null;renderPersonaList();$("#pView").innerHTML='<div class="empty"><strong>No persona yet</strong>Paste a few transcripts, captions or brand guidelines on the left and press Build persona. Saved personas show up in every persona menu, including Festive copies.</div>';return}currentPersonaId=p.id;renderPersonaList();
+  const v=p.voice||{};
+  $("#pView").innerHTML=`
+    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start">
+      <div><h2>${esc(p.name)} ${p.example?'<span class="ex">Example</span>':''}</h2><p class="lede" style="margin:0">${esc(p.summary||"")}</p></div>
+      <div class="actions" style="margin:0">
+        <button class="btn small" id="pUse">Write next scripts as ${esc((p.name||"").replace(/^Example: /,""))}</button>
+        <button class="btn ghost small" id="pCopy">Copy JSON</button>
+        ${p.example?"":`<button class="btn ghost small" id="pDel">Delete</button>`}
+      </div>
+    </div>
+    ${p.confidence&&!p.example?`<p class="note">Confidence: <b>${esc(p.confidence)}</b>${(p.gaps||[]).length?" · Gaps: "+esc(p.gaps.join("; ")):""}</p>`:""}
+    <h3>Voice</h3>
+    <div class="hooks">
+      <div><b>Tone</b>${esc(v.tone)}</div><div><b>Energy and pace</b>${esc([v.energy,v.pace].filter(Boolean).join(" · "))}</div>
+      <div><b>Language</b>${esc(v.language_mix)}</div><div><b>Sentence length</b>${esc(v.sentence_length)}</div>
+    </div>
+    <h3>Signature lines</h3><div class="chips">${(v.signature_phrases||[]).map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>
+    <h3>Hook patterns</h3><div class="chips">${(p.hook_patterns||[]).map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>
+    <h3>Says / never says</h3><div class="chips">${(v.vocabulary_do||[]).map(x=>`<span class="chip">${esc(x)}</span>`).join("")}${(v.vocabulary_avoid||[]).map(x=>`<span class="chip b">${esc(x)}</span>`).join("")}</div>
+    <h3>Point of view</h3><div class="chips">${(p.beliefs_pov||[]).map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>
+    <h3>Persona JSON</h3><pre class="json">${esc(JSON.stringify(p,null,2))}</pre>`;
+  $("#pCopy").onclick=()=>copyText(JSON.stringify(p,null,2));
+  $("#pUse").onclick=()=>{renderPersonaSelects();$("#wPersona").value=p.id;setWriteMode("script");switchTab("write");toast("Persona loaded into the brief")};
+  const d=$("#pDel");if(d)d.onclick=()=>{d.textContent="Press again to delete";d.onclick=()=>deletePersona(p.id)};
+}
+
+/* ---------- Prompt pieces ---------- */
+function rulesBlock(mode){
+  return `RULEBOOK
+${mode==="campaign"
+? `Campaign stages: ${CAMP_STAGES.map(s=>`${s.name}: ${s.job}`).join(" | ")}
+Campaign rules: ${CAMP_RULES.join(" | ")}
+Four value propositions every campaign must layer: Community, Legacy, Growth, Price appreciation.
+CLARITY RULE: the campaign must not be confusing. One look, one meaning. No wordplay that needs decoding, no abstract headlines that could belong to any brand, no two messages fighting in one execution, no executions that say different things. If a passerby cannot say what it means and who it is for in one line, it fails.`
+: `Meta ranking signals (score each 0-10): ${SIGNALS.map(o=>`${o.id} = ${o.name}: ${o.test}`).join(" | ")}
+Reel structure for ${SETUP.len}s: ${beatLine(SETUP.len)}
+Carousel structure, slide-wise: ${CAROUSEL_ORDER.join(" -> ")}. Slide 1 must stop the scroll; following slides build curiosity without revealing too early; middle slides reveal progressively while keeping tension; final slides give a practical takeaway or framework, then a natural CTA.
+Viral reel framework (JSON): ${JSON.stringify(FRAMEWORK)}`}
+Content quality: ${QUALITY}
+BANNED WORDS (never use; flag every one): ${allBanned().map(x=>x.w).join(", ")}
+FORMAT BANS (never use; flag every one): em dashes (—) and en dashes used as dashes, use a full stop or comma instead; ALL contractions of every kind (I'll, I'm, I've, I'd, you're, we'll, they've, it's, that's, there's, let's, don't, can't, won't, isn't, gonna and so on). Write every one in full: I will, I am, do not, it is, let us. Possessives like "builder's" are fine. Hyphens in timestamps like 0-3s are fine.
+MACHINE LANGUAGE (never use; flag every one, plus any phrasing that sounds AI-written or corporate, such as "not just X, it is Y", "whether you are X or Y", stacked triplets of adjectives, empty abstractions): ${allMachine().map(x=>x.w).join(", ")}
+${mode==="campaign"?"Indian real estate compliance: no guaranteed or assured returns, no unverifiable superlatives, distances and timelines must be specific and verifiable, RERA registration number required on project ads (ASCI and RERA advertising rules).":"Compliance for scripts: never promise guaranteed or assured returns and never make unverifiable claims. A script does NOT need a RERA number, prices, sq ft, distances or project specs. Only flag compliance when the script itself makes a claim that needs backing."}
+${mode==="campaign"?"WRITING RULE: one idea, one meaning, clear on one look. Clear beats clever every time.":CRAFT+"\n"+INDIA_PLAYBOOK}
+${mode==="campaign"?"Language rule: plain words, specific facts, real numbers. If a fact is not provided, use a clearly marked placeholder like [verify: metro walk time] instead of inventing it.":NO_NEW_FACTS}${skillsBlock()}`;
+}
+function renderSetups(){
+  const st=SETUP,p=PRODUCTIONS[st.prod]||PRODUCTIONS.influencer;
+  const opt=(arr,val)=>arr.map(([v,l])=>`<option value="${esc(v)}"${String(v)===String(val)?" selected":""}>${esc(l)}</option>`).join("");
+  const showInfl=p.talent==="influencers"||p.talent==="both", showAct=p.talent==="actors"||p.talent==="both"||st.prod==="influencer";
+  document.querySelectorAll("[data-setup]").forEach((box,i)=>{
+    const id=k=>`su${i}_${k}`;
+    box.innerHTML=`<label for="${id("depth")}">How much to change</label><select id="${id("depth")}" data-k="depth">${opt(Object.entries(DEPTHS),st.depth||"keep")}</select>
+    <label>Length</label><div class="lenseg" role="group" aria-label="Length">${[15,30,60,90].map(s=>`<button type="button" data-len="${s}" aria-pressed="${st.len===s}">${s===60?"1 min":s===90?"90s":s+"s"}</button>`).join("")}</div>
+    <div class="row">
+      <div><label for="${id("prod")}">Production</label><select id="${id("prod")}" data-k="prod">${opt(Object.entries(PRODUCTIONS).map(([k,v])=>[k,v.label]),st.prod)}</select></div>
+      ${showInfl?`<div><label for="${id("infl")}">Influencers</label><select id="${id("infl")}" data-k="infl" data-num>${opt([[1,"1"],[2,"2"],[3,"3"]],st.infl)}</select></div>`:""}
+      ${showAct?`<div><label for="${id("act")}">Actors</label><select id="${id("act")}" data-k="actors" data-num>${opt((st.prod==="influencer"?[[0,"None"]]:[]).concat([[1,"1"],[2,"2"],[3,"3"],[4,"4"],[5,"5"]]),st.actors)}</select></div>`:""}
+      <div><label for="${id("lang")}">Language</label><select id="${id("lang")}" data-k="lang">${opt(LANGS.map(l=>[l,l]),st.lang)}</select></div>
+    </div>
+    <div class="row">
+      <div><label for="${id("hook")}">Hook pillar</label><select id="${id("hook")}" data-k="hook">${opt(Object.entries(HOOK_PILLARS).map(([k,v])=>[k,k==="auto"?"Best fit":v.split(":")[0]]),st.hook)}</select></div>
+      <div><label for="${id("fmt")}">Format</label><select id="${id("fmt")}" data-k="format">${opt(Object.entries(FORMATS),st.format)}</select></div>
+      <div><label for="${id("genre")}">Genre</label><select id="${id("genre")}" data-k="genre">${opt(Object.entries(GENRES).map(([k,v])=>[k,k==="same"?v:v.split(":")[0]]),st.genre||"same")}</select></div>
+    </div>
+    <label for="${id("hl")}">Project highlights <span class="note" style="text-transform:none;letter-spacing:0;font-weight:400">· one per line. Each goes in first as emotion, then as a plain fact.</span></label>
+    <textarea id="${id("hl")}" data-hl rows="3" style="min-height:70px;font-family:var(--f-ui);font-size:14px" placeholder="One highlight per line">${esc(st.highlights||"")}</textarea>
+    ${(SKILLS.filter(k=>k.on).length)?`<p class="note" style="margin:8px 0 0">Following your skills: <b>${esc(SKILLS.filter(k=>k.on).map(k=>k.name).join(", "))}</b></p>`:""}
+    <label class="inline" style="margin-top:12px"><input type="checkbox" data-k="visuals" ${st.visuals?"checked":""}> Include visual direction in the script <span class="note">(off: script only, add a shot list later)</span></label>`;
+    box.querySelectorAll("[data-len]").forEach(b=>b.onclick=()=>setSetup({len:+b.dataset.len}));
+    box.querySelectorAll("select[data-k]").forEach(s=>s.onchange=()=>setSetup({[s.dataset.k]:s.hasAttribute("data-num")?+s.value:s.value}));
+    box.querySelector("input[data-k=visuals]").onchange=e=>setSetup({visuals:e.target.checked});
+    box.querySelector("[data-hl]").onchange=e=>{SETUP.highlights=e.target.value;lsSet("vd_setup2",SETUP);document.querySelectorAll("[data-hl]").forEach(t=>{if(t!==e.target)t.value=e.target.value})};
+  });
+  document.querySelectorAll("[data-setline]").forEach(el=>el.textContent=setupSummary(st));
+}
+function setSetup(patch){
+  Object.assign(SETUP,patch);
+  const p=PRODUCTIONS[SETUP.prod];
+  if(patch.prod){if((p.talent==="actors"||p.talent==="both")&&!SETUP.actors)SETUP.actors=p.talent==="both"?1:2;if(SETUP.prod==="ai"&&SETUP.actors>2)SETUP.actors=2}
+  lsSet("vd_setup2",SETUP);renderSetups();
+  if(typeof renderTimeline==="function")renderTimeline();
+}
+function personaBlock(id){const p=id&&personaById(id);return p?`\nWRITE IN THIS PERSONA (match voice, rhythm, vocabulary, hooks, POV; never copy their lines verbatim; the format bans still apply): ${JSON.stringify(p)}\n`:""}
+
+/* ---------- Audit ---------- */
+let auditMode="script";
+function setAuditMode(m){
+  auditMode=m;
+  $("#amScript").setAttribute("aria-pressed",m==="script");$("#amCamp").setAttribute("aria-pressed",m==="campaign");
+  $("#aTypeWrap").hidden=m!=="script";$("#aCTypeWrap").hidden=m!=="campaign";$("#aSetupWrap").hidden=m!=="script";
+  $("#aHead").textContent=m==="script"?"The script":"The campaign";
+  $("#aLede").textContent=m==="script"?"Paste a reel script, carousel or post. Banned words, format bans and machine language are marked as you type.":"Paste headlines, support lines and executions for each medium. It is judged on clarity, the core idea, the 4-word headline test, the 3-second read, the micromarket differentiator and the four value propositions.";
+  $("#aBriefLabel").textContent=m==="script"?"Context (project, audience, platform)":"Micromarket and competition (who else advertises within 10 km)";
+  $("#aRun").textContent=m==="script"?"Audit script":"Audit campaign";
+}
+$("#amScript").onclick=()=>setAuditMode("script");$("#amCamp").onclick=()=>setAuditMode("campaign");
+function rescanAudit(){const t=$("#aText").value;const r=scan(t);$("#aProof").innerHTML=markHTML(t,r.hits)||'<span class="note">Your marked-up copy appears here.</span>';$("#aTally").innerHTML=tallyHTML(r);return r}
+let scanT;$("#aText").addEventListener("input",()=>{clearTimeout(scanT);scanT=setTimeout(rescanAudit,150)});
+function clearCopy(){const ta=$("#aText");ta.value="";rescanAudit();ta.focus()}
+$("#aClear").onclick=clearCopy;
+
+function auditPrompt(text,ctx){
+  const camp=ctx.mode==="campaign";
+  const r=scan(text);
+  const scopeLine={none:"Diagnosis only; set revised to an empty string.",hook:"In revised, rewrite only the hook or headline and keep the rest.",concept:"In revised, rebuild the piece around a stronger core idea.",full:"In revised, give a full revision that fixes everything."}[ctx.scope||"none"];
+  const structSpec=camp
+   ? `"structure":[{"beat":"Consumer insight","window":"Stage 1","present":true,"score":0-10,"note":"","why_not_10":""}], // all 9 campaign stages in order`
+   : `"structure":[{"beat":"Hook","window":"0-${beatsFor(SETUP.len)[0].e}s","present":true,"score":0-10,"note":"","why_not_10":""}], // all ${beatsFor(SETUP.len).length} beats of the ${SETUP.len}s structure for reels; for carousels use the 7 carousel stages with window = slide numbers`;
+  const extra=camp
+   ? `"headline_test":[{"text":"each headline","words":0,"pass":true,"note":""}],
+"speed_read":{"seconds":0,"pass":true,"note":"can a driver read and get it in 3 seconds"},
+"clarity":{"score":0-10,"takeaway":"the one line a passerby would actually take away","intended":"the one line the campaign wants them to take away","match":true,"confusion_points":[{"line":"exact quote","why":"what makes it confusing","fix":"clearer line"}],"why_not_10":""},
+"value_props":{"community":{"score":0-10,"note":""},"legacy":{"score":0-10,"note":""},"growth":{"score":0-10,"note":""},"price_appreciation":{"score":0-10,"note":""}},
+"rules":[{"rule":"short name","pass":true,"note":""}], // all 9 campaign rules
+"save_share":{"save_score":0-10,"share_score":0-10,"reason_to_save":"why it is remembered a week later","reason_to_share":"why people talk about it or photograph it","fix":""},
+"drop_off":[{"at":"Stage name","risk":"high|medium|low","viewer_thought":"what a buyer thinks when they ignore it here"}], // one per stage`
+   : `"signals":[{"id":"hold","score":0-10,"note":"","why_not_10":"what exactly is missing, empty if 10"}], // all 10 Meta ranking signals
+"coherence":{"score":0-10,"one_line_summary":"what the whole piece says, in one sentence a newcomer would give back","makes_sense_alone":true,"flow_breaks":[{"between":"beat A to beat B","why":"why it jumps, confuses or feels fragmented","fix":"the connecting line"}],"why_not_10":""},
+"clarity":{"score":0-10,"takeaway":"what a first-time viewer would actually take away","intended":"what the piece wants them to take away","match":true,"confusion_points":[{"line":"exact quote","why":"what makes it confusing","fix":"clearer line"}],"why_not_10":""},
+"hook_layers":{"text_hook":"what exists or 'missing'","verbal_hook":"","visual_hook":"","verbal_hook_type":"","note":""},
+"hook_pillar":{"used":"the hook pillar the first line actually fires, or 'none'","score":0-10,"why_not_10":"","stronger_hook":"one sharper first line in the ${SETUP.hook==="auto"?"best":HOOK_PILLARS[SETUP.hook].split(":")[0]} pillar"},
+"scene_check":{"is_monologue":true,"note":"does it dramatise (scene, conflict, dialogue, reveal) or just explain to camera"},
+"highlights_check":[{"highlight":"each project highlight given, if any","emotional_header":true,"tactical_secondary":true,"note":""}],
+"save_asset":"the number, formula or checklist worth saving, or 'none'","send_trigger":"the specific person a viewer would send it to, or 'none'",
+"triggers_used":[""],"triggers_to_add":[""],
+"three_elements":{"information":{"score":0-10,"note":"","why_not_10":""},"emotion":{"score":0-10,"note":"","why_not_10":""},"entertainment":{"score":0-10,"note":"","why_not_10":""}},
+"rules":[{"rule":"short name","pass":true,"note":""}], // all 8 virality rules
+"save_share":{"save_score":0-10,"share_score":0-10,"reason_to_save":"","reason_to_share":"","fix":""},
+"drop_off":[{"at":"0-3s","risk":"high|medium|low","viewer_thought":"what the viewer thinks right before they scroll away"}], // one per beat`;
+  return `You are a strict content auditor ${camp?"for real estate advertising campaigns, judging distinctiveness, memorability, clarity and selling power":"for Instagram, Facebook and YouTube Shorts, judging how Meta's ranking system and real viewers will respond: hold, watch time, sends, saves, rewatches"}. The first thing you check is whether the piece makes complete sense as one clear idea; a confusing or fragmented piece cannot score above 5 overall on anything. ${camp?"":"A script that is a monologue or lecture (someone explaining) when the production allows a scene cannot score above 5 on entertainment or sends. A hook that fires no clear pillar cannot score above 5 on the 3-second hold. A script over its word budget cannot score above 6 on watch time. "}Be strict: a 10 means nothing at all could be improved. Quote the exact weak lines. Never inflate scores.
+${rulesBlock(ctx.mode)}
+${camp?"":productionBlock(SETUP,ctx.type)+(isMood(ctx.type)?`\nThis moodboard has ${moodLines(text)} lines (maximum ${MOOD_MAX}). Score signals and structure for a moodboard: structure has one entry per HEADER/SECONDARY pair, with window "lines 1-2" and so on. A moodboard over ${MOOD_MAX} lines cannot score above 5 overall.`:`\nThis script has ${spokenWords(text)} spoken words against a budget of ${WORD_BUDGET[SETUP.len]}.`)+`\nNever mark a script down for leaving out facts it does not claim (RERA, prices, sq ft, distances, specs). Never suggest adding them.`}
+${personaBlock(ctx.persona)}
+TYPE: ${ctx.type}
+GOAL: ${ctx.goal}
+CONTEXT: ${ctx.brief||"not given"}
+${scopeLine}
+A local scan found: ${hitList(r)||"nothing"}. Every one of these must appear in banned_words, format_bans or machine_language.
+${!camp&&ctx.scope&&ctx.scope!=="none"?"REVISED LAYOUT: "+formatSpec(SETUP,/carousel/i.test(ctx.type),ctx.type):""}
+
+COPY TO AUDIT:
+"""${text.slice(0,20000)}"""
+
+Reply with only one JSON object in exactly this shape:
+{"verdict":"ship|revise|rewrite","overall":0-100,"summary":"2 sentences, plain words",
+"big_idea":{"found":"the core idea in one line or 'none'","stronger":"a stronger, simpler core idea in one line"},
+"why_it_wont_work":[{"reason":"blunt, specific","evidence":"exact quote from the copy","where":"beat or stage","impact":"high|medium|low","basis":"psychology|industry|meta algorithm","principle":"the named principle, e.g. 3-second hold, sends per reach, cognitive load, information gap, loss aversion, banner blindness"}], // 3-6 ranked by impact; if the piece is strong, list the remaining risks
+${structSpec}
+${extra},
+"banned_words":[{"word":"","line":"the line it sits in","fix":"rewritten line"}],
+"format_bans":[{"phrase":"the dash or contraction","line":"","fix":"rewritten line"}],
+"machine_language":[{"phrase":"","why":"","fix":"rewritten line"}],
+"compliance":[{"issue":"","fix":""}],
+"persona_fit":{"score":0-10,"note":""} or null,
+"revised":"${camp?"full revised campaign: insight, big idea, headline(s) of 4 words max, support lines and each media execution":"the revised script in the layout given under REVISED LAYOUT, or an empty string"}",
+"why_it_works":[{"point":"","basis":"psychology|industry|meta algorithm"}] // 3-5 points about what already works
+}`;
+}
+function gapsOf(r,text,ctx){
+  const g=[];
+  const co=r.coherence;if(co){if((+co.score||0)<10||co.makes_sense_alone===false)g.push(`Coherence ${co.score}/10. ${co.why_not_10||""}`);for(const f of co.flow_breaks||[])g.push(`Flow break (${f.between}): ${f.why||""}`)}
+  for(const o of r.signals||[])if((+o.score||0)<10)g.push(`Meta signal · ${(SIGNALS.find(x=>x.id===o.id)||{name:o.id}).name}: ${o.score}/10. ${o.why_not_10||o.note||""}`);
+  for(const s of r.structure||[])if((+s.score||0)<10||!s.present)g.push(`${s.beat} (${s.window}): ${s.score}/10. ${s.why_not_10||s.note||""}`);
+  for(const [k,v] of Object.entries(r.three_elements||{}))if((+v.score||0)<10)g.push(`Three elements · ${k}: ${v.score}/10. ${v.why_not_10||v.note||""}`);
+  for(const [k,v] of Object.entries(r.value_props||{}))if((+v.score||0)<10)g.push(`Value proposition · ${k}: ${v.score}/10. ${v.note||""}`);
+  for(const x of r.rules||[])if(!x.pass)g.push(`Rule failed · ${x.rule}: ${x.note||""}`);
+  for(const h of r.headline_test||[])if(!h.pass)g.push(`Headline test failed: "${h.text}" ${h.note||""}`);
+  if(r.speed_read&&!r.speed_read.pass)g.push(`3-second read failed: ${r.speed_read.note||""}`);
+  if(r.clarity){if((+r.clarity.score||0)<10||r.clarity.match===false)g.push(`Clarity ${r.clarity.score}/10. ${r.clarity.why_not_10||""}`);for(const c of r.clarity.confusion_points||[])g.push(`Confusing line: "${c.line}" ${c.why||""}`)}
+  const ss=r.save_share||{};if((+ss.save_score||10)<10)g.push(`Save score ${ss.save_score}/10. ${ss.fix||""}`);if((+ss.share_score||10)<10)g.push(`Share score ${ss.share_score}/10. ${ss.fix||""}`);
+  if(r.hook_layers){for(const k of ["text_hook","verbal_hook","visual_hook"])if(k!=="visual_hook"&&/missing/i.test(r.hook_layers[k]||""))g.push(`Hook layer missing: ${k}`)}
+  if(r.hook_pillar&&(+r.hook_pillar.score||0)<10)g.push(`Hook pillar (${r.hook_pillar.used||"none"}) ${r.hook_pillar.score}/10. ${r.hook_pillar.why_not_10||""} Stronger: ${r.hook_pillar.stronger_hook||""}`);
+  if(r.scene_check&&r.scene_check.is_monologue&&!["founder"].includes(SETUP.prod)&&SETUP.format!=="talking_head")g.push(`Reads like someone explaining, not a scene: ${r.scene_check.note||""}`);
+  if(r.signals&&/^none$/i.test(String(r.save_asset||"").trim()))g.push("No save asset: add a number, formula or 3-point check worth saving");
+  if(r.signals&&/^none$/i.test(String(r.send_trigger||"").trim()))g.push("No send trigger: no moment specific enough that a viewer thinks of who to send it to");
+  if(r.signals&&ctx&&isMood(ctx.type)){const n=moodLines(text);if(n>MOOD_MAX)g.push(`Moodboard has ${n} lines. Cut to ${MOOD_MAX} or fewer.`);for(const h of r.highlights_check||[])if(!h.emotional_header||!h.tactical_secondary)g.push(`Highlight "${h.highlight}" needs ${!h.emotional_header?"an emotional header":""}${!h.emotional_header&&!h.tactical_secondary?" and ":""}${!h.tactical_secondary?"a tactical secondary line":""}`)}
+  if(r.signals&&ctx&&/reel/i.test(ctx.type||"")){const lc=lenCheck(text,SETUP);if(lc.over)g.push(`Too long for ${SETUP.len}s: ${lc.w} spoken words, cut to about ${lc.b}`)}
+  for(const b of r.banned_words||[])g.push(`Banned word: ${b.word}`);
+  for(const b of r.format_bans||[])g.push(`Format ban: ${b.phrase}`);
+  for(const m of r.machine_language||[])g.push(`Machine language: ${m.phrase}`);
+  for(const c of r.compliance||[]){if(r.signals&&/rera|sq\.?\s?ft|square|carpet|price|distance|minute|possession|approval|spec/i.test(c.issue||"")&&!/guarant|assured|return/i.test(c.issue||""))continue;g.push(`Compliance: ${c.issue}`)}
+  const local=scan(text).hits;for(const h of local)g.push(`${kindLabel[h.kind]}: "${h.t}"`);
+  return [...new Set(g)];
+}
+function auditCtx(){return {mode:auditMode,type:auditMode==="script"?$("#aType").value:$("#aCType").value,goal:$("#aGoal").value,brief:$("#aBrief").value,persona:$("#aPersona").value,scope:$("#aScope").value,deep:$("#aDeep").checked}}
+let lastAudit=null;
+$("#aRun").onclick=async()=>{
+  const text=$("#aText").value.trim();if(!text){toast("Paste some copy first");return}
+  rescanAudit();const ctx=auditCtx();
+  const res=await ask(auditPrompt(text,ctx),ctx.deep,$("#aReport"),"Reading it the way a strict copy chief would…");
+  if(!res)return;
+  lastAudit={text,res,ctx};versions=[{label:"Original",text,score:+res.overall||0}];renderAudit($("#aReport"),{text,res,ctx});
+};
+let versions=[];
+function versionsHTML(){return versions.length>1?`<h3>Versions</h3><ul class="rounds">${versions.map((v,i)=>`<li><span>${esc(v.label)}</span><button class="btn ghost small" data-v="${i}">Load into editor</button><b>${v.score}/100</b></li>`).join("")}</ul>`:""}
+function bindVersions(el,mode){el.querySelectorAll("button[data-v]").forEach(b=>b.onclick=()=>{loadIntoAudit(versions[+b.dataset.v].text,mode);toast("Loaded. Edit it or audit again.")})}
+
+/* ---------- Revise with the user's feedback ---------- */
+function feedbackPrompt(text,audit,ctx,feedback){
+  const camp=ctx.mode==="campaign";
+  return `You are the copy chief. The client has given feedback on this ${camp?"campaign":"piece"}. Revise it.
+${rulesBlock(ctx.mode)}
+${personaBlock(ctx.persona)}
+TYPE: ${ctx.type}
+GOAL: ${ctx.goal}
+CONTEXT: ${ctx.brief||"not given"}
+CURRENT VERSION:
+"""${text.slice(0,20000)}"""
+LAST AUDIT (for reference): ${JSON.stringify({overall:audit.overall,big_idea:audit.big_idea,why_it_wont_work:audit.why_it_wont_work,clarity:audit.clarity}).slice(0,8000)}
+CLIENT FEEDBACK (top priority, follow it exactly):
+"""${feedback.slice(0,6000)}"""
+Instructions:
+- Apply every point of the feedback. Change only what the feedback asks for, plus anything needed to keep the piece scoring 10/10.
+- If a feedback point would break a banned-word, format-ban, machine-language or compliance rule, follow its intent in a compliant way and explain that in conflicts.
+- Rewrite the affected parts so the whole piece still makes complete sense as one scene. No fragments, no topic jumps, no lecture.
+- Keep the required structure${camp?" (headlines 4 words max, clear in one look, the four value propositions, RERA placeholder)":` (the ${SETUP.len}s beats, or the carousel slide order) and the word budget`}.
+- Zero banned words, zero machine language, zero em dashes, zero contractions.
+${camp?"":productionBlock(SETUP,ctx.type)+"\n"+NO_NEW_FACTS+"\n"+formatSpec(SETUP,/carousel/i.test(ctx.type),ctx.type)}
+Reply with only one JSON object:
+{"revised":"the full revised ${camp?"campaign":"script as plain text in the layout above"}","changes":[{"feedback_point":"the client's point, max 8 words","change":"what you changed, max 12 words"}],"conflicts":[{"feedback_point":"","rule":"","how_handled":"max 15 words"}]}`;
+}
+async function feedbackRevise(cur,feedback){
+  const el=$("#aReport");const ctl=new AbortController();const ctx=cur.ctx;
+  spinner(el,"Applying your feedback…").onclick=()=>ctl.abort();
+  let rv,audit;
+  try{
+    rv=await askJSON(feedbackPrompt(cur.text,cur.res,ctx,feedback),true,ctl,n=>{const t=el.querySelector(".tx");if(t)t.textContent=`Rewriting with your notes… ${n.toLocaleString()} characters`});
+    if(!rv||!rv.revised)throw {code:"invalid_json"};
+    const t=el.querySelector(".tx");if(t)t.textContent="A fresh audit is re-scoring the new version…";
+    audit=await askJSON(auditPrompt(String(rv.revised),{...ctx,scope:"none"}),ctx.deep,ctl);
+  }catch(e){
+    if(rv&&rv.revised&&!audit){toast(errMsg(e));audit=cur.res;rv.unscored=true}
+    else{el.innerHTML=`<p class="err">${esc(errMsg(e))}</p>`;const back=document.createElement("button");back.className="btn ghost small";back.textContent="Back to the last report";back.onclick=()=>renderAudit(el,cur);el.appendChild(back);return}
+  }
+  const text=String(rv.revised);
+  if(!versions.length)versions=[{label:"Original",text:cur.text,score:+cur.res.overall||0}];
+  versions.push({label:`Feedback ${versions.filter(v=>v.label.startsWith("Feedback")).length+1}`,text,score:rv.unscored?"–":(+audit.overall||0)});
+  const header=`<h2>Revised with your feedback</h2>
+    <div class="banner short" style="background:var(--chip);color:var(--ink)"><b>Your feedback:</b> ${esc(feedback)}</div>
+    <div id="fbBlock"></div><div class="tally" id="fbTally"></div>
+    <div class="actions"><button class="btn small" id="fbCopy">Copy</button><button class="btn ghost small" id="fbShots">Add visuals / shot list</button><button class="btn ghost small" id="fbLoad">Load into editor</button></div><div id="fbShotsOut"></div>
+    ${(rv.changes||[]).length?`<h3>How each point was handled</h3><ul class="reasons">${rv.changes.map(c=>`<li><span class="tag ok" style="background:var(--ok-bg);color:var(--ok)">done</span><span><b>${esc(c.feedback_point)}</b><br>${esc(c.change)}</span></li>`).join("")}</ul>`:""}
+    ${(rv.conflicts||[]).length?`<h3>Where your feedback met a rule</h3><ul class="reasons">${rv.conflicts.map(c=>`<li><span class="tag medium">${esc(c.rule)}</span><span><b>${esc(c.feedback_point)}</b><br>${esc(c.how_handled)}</span></li>`).join("")}</ul>`:""}
+    ${rv.unscored?`<p class="err">The new version could not be re-scored. The scores below are for the previous version. Run the audit again on it.</p>`:""}
+    ${versionsHTML()}
+    <h3 style="margin-top:28px">Audit of this version</h3>`;
+  renderAudit(el,{text,res:audit,ctx},{header,hideSuggestion:true,after:()=>{
+    const fbT=t=>{$("#fbTally").innerHTML=(ctx.mode==="script"&&/reel/i.test(ctx.type)?lenCheck(t,SETUP).pill:"")+tallyHTML(scan(t))};
+    const cm=mountCommentable($("#fbBlock"),text,ctx,cur.text,t=>{fbT(t);lastAudit={text:t,res:audit,ctx}});fbT(text);
+    $("#fbShots").onclick=()=>shotList(cm.get(),$("#fbShotsOut"));
+    $("#fbCopy").onclick=()=>copyText(cm.get());$("#fbLoad").onclick=()=>{loadIntoAudit(cm.get(),ctx.mode);toast("Loaded. Edit it or audit again.")};
+    bindVersions(el,ctx.mode);
+  }});
+  lastAudit={text,res:audit,ctx};
+  sheetRows.push({kind:ctx.mode==="campaign"?"Campaign (feedback)":"Script (feedback)",title:"Feedback revision: "+(ctx.brief||ctx.type),pillar:"",format:ctx.type,text,why:`Feedback: ${feedback}`});
+  $("#wCsv").disabled=false;
+}
+
+function scoreRow(name,s,note,gap){s=+s||0;return `<tr><td>${esc(name)}</td><td class="n">${s}/10</td><td><div class="bar"><i class="${scoreClass(s,10)}" style="width:${s*10}%"></i></div></td><td>${esc(note)}${s<10&&gap?`<span class="gap">Missing for 10: ${esc(gap)}</span>`:""}</td></tr>`}
+function renderAudit(el,{text,res:r,ctx},opts={}){
+  const camp=ctx.mode==="campaign";
+  const v=(r.verdict||"revise").toLowerCase();
+  const gaps=gapsOf(r,text,ctx);
+  const og=(r.signals||[]).map(o=>scoreRow((SIGNALS.find(x=>x.id===o.id)||{name:o.id}).name,o.score,o.note,o.why_not_10)).join("");
+  const co=r.coherence;
+  const st=(r.structure||[]).map(b=>{const s=+b.score||0;return `<tr><td class="n">${esc(b.window)}</td><td>${esc(b.beat)}</td><td><span class="pf ${b.present?'y':'n'}">${b.present?'PRESENT':'MISSING'}</span></td><td class="n">${s}/10</td><td>${esc(b.note)}${s<10&&b.why_not_10?`<span class="gap">Missing for 10: ${esc(b.why_not_10)}</span>`:""}</td></tr>`}).join("");
+  const rules=(r.rules||r.virality_rules||[]).map(x=>`<tr><td><span class="pf ${x.pass?'y':'n'}">${x.pass?'PASS':'FAIL'}</span></td><td>${esc(x.rule)}</td><td>${esc(x.note)}</td></tr>`).join("");
+  const fixes=(arr,kind,key)=>(arr||[]).map(x=>`<div class="fix"><div class="was"><mark class="${kind}">${esc(x[key])}</mark>${x.line?` <span class="note">in “${esc(x.line)}”</span>`:""}</div><div class="now">${esc(x.fix)}</div>${x.why?`<div class="why">${esc(x.why)}</div>`:""}</div>`).join("");
+  const te=r.three_elements, vp=r.value_props;
+  const hl=r.hook_layers;const ss=r.save_share||{};
+  const fails=(r.why_it_wont_work||[]).map(f=>`<li class="fail"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="tag ${esc(f.impact)}">${esc(f.impact)} impact</span><span class="tag">${esc(f.where)}</span><span class="note">${esc(f.basis)}${f.principle?" · "+esc(f.principle):""}</span></div><div><b>${esc(f.reason)}</b></div>${f.evidence?`<q>${esc(f.evidence)}</q>`:""}</li>`).join("");
+  const drops=r.drop_off||[];
+  const perfect=gaps.length===0;
+  el.innerHTML=`
+  ${opts.header||""}
+  <div class="verdict"><span class="stamp ${esc(v)}">${esc(v.toUpperCase())}</span><div class="score">${+r.overall||0}<small>/100</small></div><p>${esc(r.summary)}</p></div>
+  ${perfect?`<div class="banner win" style="margin-top:16px">10/10 on every parameter. Nothing left to fix.</div>`:`<div class="revise-cta"><p><b>${gaps.length} gaps stand between this and 10/10.</b> Revise rewrites it to close every gap, then a fresh audit re-scores it, up to 3 rounds. A round is kept only if it scores higher.</p><button class="btn gold" id="toTen">Revise to 10/10</button></div>`}
+  ${camp?"":`<div class="setline">Revising for: <span data-setline>${esc(setupSummary(SETUP))}</span><button type="button" id="editSetup">Change</button></div>`}
+  <div class="fbbox"><label for="fbText">Your feedback on this version</label>
+    <textarea id="fbText" rows="3" style="min-height:80px" placeholder="Write your feedback"></textarea>
+    <div class="actions" style="margin-top:8px"><button class="btn" id="fbGo">Revise with my feedback</button><span class="note">Your notes come first. The rules still apply, and a fresh audit re-scores the result.</span></div></div>
+  ${fails?`<h3>Why it will not work</h3><ul class="reasons" style="gap:14px">${fails}</ul>`:""}
+  ${drops.length?`<h3>${camp?"Where buyers stop paying attention":"Where viewers drop off"}</h3><div class="dropstrip">${drops.map(d=>`<div class="${esc(d.risk)}" title="${esc(d.viewer_thought)}">${esc(d.at)}</div>`).join("")}</div><ul class="thoughts">${drops.filter(d=>d.risk!=="low").map(d=>`<li><span>${esc(d.at)}</span><span>“${esc(d.viewer_thought)}”</span></li>`).join("")||'<li><span></span><span class="note">Low drop-off risk across the piece.</span></li>'}</ul>`:""}
+  ${r.big_idea?`<h3>The core idea</h3><div class="fix" style="border:0"><div class="was">${esc(r.big_idea.found)}</div><div class="now">${esc(r.big_idea.stronger)}</div></div>`:""}
+  ${co?`<h3>Does it make sense? Coherence ${+co.score||0}/10 ${co.makes_sense_alone===false?'<span class="pf n">FRAGMENTED</span>':'<span class="pf y">FLOWS</span>'}</h3>
+    <div class="hooks"><div><b>What the whole piece says</b>${esc(co.one_line_summary)}</div></div>
+    ${(co.flow_breaks||[]).map(f=>`<div class="fix"><div class="was">${esc(f.between)}: ${esc(f.why)}</div><div class="now">${esc(f.fix)}</div></div>`).join("")}
+    ${(+co.score||0)<10&&co.why_not_10?`<p class="note" style="color:var(--proof)">Missing for 10: ${esc(co.why_not_10)}</p>`:""}`:""}
+  ${og?`<h3>Meta ranking signals</h3><div class="tw"><table><tbody>${og}</tbody></table></div>`:""}
+  <h3>${camp?"Campaign stages":"Structure, beat by beat"}</h3><div class="tw"><table><thead><tr><th>${camp?"Stage":"Time"}</th><th>${camp?"Element":"Beat"}</th><th></th><th>Score</th><th>Note</th></tr></thead><tbody>${st}</tbody></table></div>
+  ${camp&&(r.headline_test||[]).length?`<h3>Headline test (4 words max)</h3><div class="tw"><table><tbody>${r.headline_test.map(h=>`<tr><td><span class="pf ${h.pass?'y':'n'}">${h.pass?'PASS':'FAIL'}</span></td><td style="font-family:var(--f-display);font-size:17px">${esc(h.text)}</td><td class="n">${+h.words||0} words</td><td>${esc(h.note)}</td></tr>`).join("")}</tbody></table></div>`:""}
+  ${r.clarity?`<h3>Clarity · ${+r.clarity.score||0}/10 ${r.clarity.match===false?'<span class="pf n">CONFUSING</span>':'<span class="pf y">CLEAR</span>'}</h3>
+    <div class="hooks"><div><b>What they will take away</b>${esc(r.clarity.takeaway)}</div><div><b>What it wants them to take away</b>${esc(r.clarity.intended)}</div></div>
+    ${(r.clarity.confusion_points||[]).map(c=>`<div class="fix"><div class="was">${esc(c.line)}</div><div class="now">${esc(c.fix)}</div><div class="why">${esc(c.why)}</div></div>`).join("")}
+    ${(+r.clarity.score||0)<10&&r.clarity.why_not_10?`<p class="note" style="color:var(--proof)">Missing for 10: ${esc(r.clarity.why_not_10)}</p>`:""}`:""}
+  ${camp&&r.speed_read?`<h3>3-second read</h3><p style="margin:0"><span class="pf ${r.speed_read.pass?'y':'n'}">${r.speed_read.pass?'PASS':'FAIL'}</span> · about ${+r.speed_read.seconds||0}s to get it. ${esc(r.speed_read.note)}</p>`:""}
+  ${vp?`<h3>Value propositions</h3><div class="tw"><table><tbody>${scoreRow("Community",vp.community?.score,vp.community?.note)}${scoreRow("Legacy",vp.legacy?.score,vp.legacy?.note)}${scoreRow("Growth",vp.growth?.score,vp.growth?.note)}${scoreRow("Price appreciation",vp.price_appreciation?.score,vp.price_appreciation?.note)}</tbody></table></div>`:""}
+  ${hl?`<h3>Hook layers</h3><div class="hooks"><div><b>Text hook</b>${esc(hl.text_hook)}</div><div><b>Verbal hook</b>${esc(hl.verbal_hook)}${hl.verbal_hook_type?` <span class="note">(${esc(hl.verbal_hook_type)})</span>`:""}</div><div><b>Visual hook</b>${esc(hl.visual_hook)}</div></div>${hl.note?`<p class="note">${esc(hl.note)}</p>`:""}`:""}
+  ${r.hook_pillar?`<h3>Hook pillar · ${+r.hook_pillar.score||0}/10</h3><div class="hooks"><div><b>Pillar it fires</b>${esc(r.hook_pillar.used)}</div><div><b>Sharper hook</b>${esc(r.hook_pillar.stronger_hook)}</div></div>${(+r.hook_pillar.score||0)<10&&r.hook_pillar.why_not_10?`<p class="note" style="color:var(--proof)">Missing for 10: ${esc(r.hook_pillar.why_not_10)}</p>`:""}`:""}
+  ${r.scene_check?`<h3>Scene or speech? <span class="pf ${r.scene_check.is_monologue?'n':'y'}">${r.scene_check.is_monologue?'SOMEONE EXPLAINING':'PLAYS AS A SCENE'}</span></h3><p class="note">${esc(r.scene_check.note)}</p>`:""}
+  ${r.save_asset||r.send_trigger?`<div class="hooks"><div><b>Save asset</b>${esc(r.save_asset)}</div><div><b>Send trigger</b>${esc(r.send_trigger)}</div></div>`:""}
+  ${(r.triggers_used||r.triggers_to_add)?`<h3>Attention triggers</h3><div class="chips">${(r.triggers_used||[]).map(t=>`<span class="chip">${esc(t)}</span>`).join("")}${(r.triggers_to_add||[]).filter(Boolean).map(t=>`<span class="chip m">add: ${esc(t)}</span>`).join("")}</div>`:""}
+  ${te?`<h3>Three elements</h3><div class="tw"><table><tbody>${["information","emotion","entertainment"].map(k=>scoreRow(k[0].toUpperCase()+k.slice(1),te[k]?.score,te[k]?.note,te[k]?.why_not_10)).join("")}</tbody></table></div>`:""}
+  <h3>${camp?"Campaign rules":"Virality rules"}</h3><div class="tw"><table><tbody>${rules}</tbody></table></div>
+  <h3>${camp?"Memorability and talkability":"Save and share test"}</h3><div class="hooks"><div><b>${camp?"Memorable":"Save"} ${+ss.save_score||0}/10</b>${esc(ss.reason_to_save)}</div><div><b>${camp?"Talked about":"Share"} ${+ss.share_score||0}/10</b>${esc(ss.reason_to_share)}</div></div>${ss.fix?`<p class="note">${esc(ss.fix)}</p>`:""}
+  ${(r.banned_words||[]).length?`<h3>Banned words · ${r.banned_words.length}</h3>${fixes(r.banned_words,"b","word")}`:""}
+  ${(r.format_bans||[]).length?`<h3>Format bans · ${r.format_bans.length}</h3>${fixes(r.format_bans,"f","phrase")}`:""}
+  ${(r.machine_language||[]).length?`<h3>Machine language · ${r.machine_language.length}</h3>${fixes(r.machine_language,"m","phrase")}`:""}
+  ${(r.compliance||[]).length?`<h3>Compliance</h3>${r.compliance.map(c=>`<div class="fix"><div class="was">${esc(c.issue)}</div><div class="now">${esc(c.fix)}</div></div>`).join("")}`:""}
+  ${r.persona_fit?`<h3>Persona fit · ${+r.persona_fit.score||0}/10</h3><p class="note">${esc(r.persona_fit.note)}</p>`:""}
+  ${r.revised&&!opts.hideSuggestion?`<h3>Suggested revision</h3><div class="copyblock" id="revBlock"></div><div class="tally" id="revTally"></div><div class="actions"><button class="btn ghost small" id="revCopy">Copy</button><button class="btn ghost small" id="revLoad">Audit this version</button></div>`:""}
+  ${(r.why_it_works||[]).length?`<h3>What already works</h3><ul class="reasons">${r.why_it_works.map(w=>`<li><span class="tag">${esc(w.basis)}</span><span>${esc(w.point)}</span></li>`).join("")}</ul>`:""}`;
+  const t=$("#toTen");if(t)t.onclick=()=>reviseToTen({text,res:r,ctx});
+  const es=$("#editSetup");if(es)es.onclick=()=>{$("#aSetupWrap").scrollIntoView({behavior:"smooth",block:"center"})};
+  $("#fbGo").onclick=()=>{const fb=$("#fbText").value.trim();if(!fb){toast("Write your feedback first");$("#fbText").focus();return}feedbackRevise({text,res:r,ctx},fb)};
+  if(r.revised&&!opts.hideSuggestion){const rs=scan(r.revised);$("#revBlock").innerHTML=markHTML(r.revised,rs.hits);$("#revTally").innerHTML=(ctx.mode==="script"&&/reel/i.test(ctx.type)?lenCheck(r.revised,SETUP).pill:"")+tallyHTML(rs);$("#revCopy").onclick=()=>copyText(r.revised);$("#revLoad").onclick=()=>{loadIntoAudit(r.revised,ctx.mode);$("#aRun").click()}}
+  if(opts.after)opts.after();
+}
+function loadIntoAudit(text,mode){setAuditMode(mode);$("#aText").value=text;rescanAudit();switchTab("audit");window.scrollTo({top:0,behavior:"smooth"})}
+
+/* ---------- Revise to 10/10 loop ---------- */
+function revisePrompt(text,audit,ctx,gaps,round,rejected,orig){
+  const camp=ctx.mode==="campaign";const car=/carousel/i.test(ctx.type);
+  const depth=SETUP.depth||"keep";
+  const fidelity=camp?"":{
+    keep:`HOW MUCH TO CHANGE: KEEP THE CLIENT'S SCRIPT. This is an edit, not a new script. Keep the same core idea, story, scene, characters, speaker names, order of beats, language and every line that already works, word for word. Change only the lines the audit flags: fix the hook, cut flab to fit the word budget, replace banned or machine words, add the save asset and send trigger inside the existing scene. At least two thirds of the original wording must survive. If a fix would need a different concept, leave that gap open instead.`,
+    sharpen:`HOW MUCH TO CHANGE: SHARPEN. Keep the same core idea, story, characters and order of events. You may rewrite any line to make it stronger, and you may rebuild the hook, but a viewer who saw the original must recognise this as the same script.`,
+    rebuild:`HOW MUCH TO CHANGE: REBUILD. You may start fresh from the strongest core idea and a new scene.`
+  }[depth];
+  return `You are ${depth==="rebuild"||camp?"rewriting":"editing"} this ${camp?"campaign":"script"} so a strict auditor scores it 10/10. Round ${round}. The current best version scores ${audit.overall}/100: the new one must score higher.
+${fidelity}
+${orig&&orig!==text?`THE CLIENT'S ORIGINAL SCRIPT (stay faithful to this, not only to the current best version):\n"""${orig.slice(0,12000)}"""`:""}
+${rulesBlock(ctx.mode)}
+${camp?"":productionBlock(SETUP,ctx.type)}
+${personaBlock(ctx.persona)}
+TYPE: ${ctx.type}
+GOAL: ${ctx.goal}
+CONTEXT: ${ctx.brief||"not given"}
+CURRENT BEST VERSION:
+"""${text.slice(0,20000)}"""
+AUDIT OF IT (JSON): ${JSON.stringify({overall:audit.overall,big_idea:audit.big_idea,hook_pillar:audit.hook_pillar,scene_check:audit.scene_check,save_asset:audit.save_asset,send_trigger:audit.send_trigger,coherence:audit.coherence,clarity:audit.clarity,why_it_wont_work:audit.why_it_wont_work,signals:audit.signals,structure:audit.structure,three_elements:audit.three_elements,value_props:audit.value_props,rules:audit.rules,headline_test:audit.headline_test,save_share:audit.save_share,drop_off:audit.drop_off,compliance:camp?audit.compliance:undefined}).slice(0,24000)}
+WHAT IS HOLDING IT BACK${camp?"":", MOST IMPORTANT FIRST (fix these; do not cram in extra lines to tick boxes)"}:
+${(camp?gaps:topGaps(gaps)).map((g,i)=>`${i+1}. ${g}`).join("\n")}
+${camp?"":NO_NEW_FACTS}
+${rejected?`THE LAST ATTEMPT WAS THROWN OUT because it scored ${rejected.score}/100. Its problems: ${rejected.why}. Do not repeat them.\n`:""}HOW TO REWRITE (in this order):
+1. ${camp||SETUP.depth==="rebuild"?"Do not patch line by line. Start fresh from the strongest core idea, in one plain sentence.":"Read the original closely. Mark the lines that already work and keep them. Fix only what is flagged below."}
+${camp?`2. One look, one meaning. Every execution says the same single thing. Headlines 4 words or fewer, readable in 3 seconds, no wordplay that needs decoding. Layer Community, Legacy, Growth and Price appreciation in support lines. Include a [RERA No.] placeholder.
+3. Cut anything that adds a second message.`:`2. ${SETUP.depth==="rebuild"?"Pick the scene: who is in it (only the cast in the production setup), what the conflict is, what gets revealed. It must play as a scene, not someone explaining.":"Keep the original scene and cast. If it reads like someone explaining, make it play more like a scene using the same people and the same story."}
+3. Write 3 candidate hook lines in the hook pillar silently${SETUP.depth==="keep"?", each close to the original hook's idea,":""} and use only the strongest. It must make a viewer feel something or need the answer within 2 seconds.
+4. Place the save asset and the send trigger inside the existing story${SETUP.depth==="rebuild"?" where they hit hardest":", without adding new scenes"}. Land a twist or loop at the end, then the CTA.
+5. ${isMood(ctx.type)?`Count the lines. ${MOOD_MAX} lines maximum, in HEADER/SECONDARY pairs. Each header is the emotional angle of a highlight, each secondary is the same highlight as a plain tactical detail.`:`Count the spoken words. Stay within ${WORD_BUDGET[SETUP.len]} (10 percent over at most). Shorter and sharper beats longer.`}`}
+6. Zero banned words (including flat or flats), zero machine language, zero em dashes, zero contractions (write I will, do not, it is, let us). ${camp?"Real facts from the brief; where a fact is missing use [verify: ...].":"The revision must read better out loud than the version above. If a change does not make it better to watch, do not make it."}
+${camp?"":formatSpec(SETUP,car,ctx.type)}
+Reply with only one JSON object:
+{"core_idea":"one plain sentence, max 15 words","revised":"${camp?"the full campaign: insight, core idea, headlines, support lines, each media execution, CTA":"the script as plain text in the layout above"}","changes":["max 3 items, each under 12 words"]}`;
+}
+const GAP_PRIORITY=[/hook/i,/explaining|scene/i,/too long/i,/coherence|flow break|confusing|clarity/i,/banned|format ban|machine/i,/save asset|send trigger|save score|share score/i,/watch time|3-second|sends|saves|rewatch/i];
+function topGaps(gaps){const rank=g=>{const i=GAP_PRIORITY.findIndex(r=>r.test(g));return i<0?99:i};return [...gaps].sort((a,b)=>rank(a)-rank(b)).slice(0,10)}
+function factsOf(t){const out=new Map();const s=String(t||"");
+  const res=[/₹\s?[\d.,]+\s*(?:lakh|lakhs|crore|crores|cr|l|k)?/gi,/\b\d[\d,.]*\s*(?:sq\.?\s?ft|sqft|square feet|bhk|acres?|km|kms|minutes?|mins?|floors?|towers?|units?|%|percent|lakh|lakhs|crore|crores|cr|years?)\b/gi,/\brera\b/gi,/\[verify[^\]]*\]/gi,/\b(?:19|20)\d\d\b/g];
+  for(const re of res){let m;while((m=re.exec(s))){const k=m[0].toLowerCase().replace(/[\s,₹]/g,"").replace(/lakhs?/,"lakh").replace(/crores?|cr\b/,"crore").replace(/^\[verify.*/,"[verify]");if(!out.has(k))out.set(k,m[0].trim())}}
+  return out}
+function newFacts(orig,brief,now){const have=new Set([...factsOf(orig).keys(),...factsOf(brief).keys()]);return [...factsOf(now)].filter(([k])=>!have.has(k)).map(([,v])=>v)}
+function wordsOf(t){return new Set(String(t||"").toLowerCase().replace(/\[[^\]]*\]/g," ").split(/[^\p{L}\p{N}₹]+/u).filter(w=>w.length>2))}
+function keptShare(orig,now){const A=wordsOf(orig),B=wordsOf(now);if(!A.size)return 1;let k=0;for(const w of A)if(B.has(w))k++;return k/A.size}
+const MIN_KEEP={keep:.45,sharpen:.2,rebuild:0};
+function cohOf(a){return a&&a.coherence?(+a.coherence.score||0):(a&&a.clarity?(+a.clarity.score||0):10)}
+function better(a,b,ga,gb){if(cohOf(a)<cohOf(b))return false;const sa=+a.overall||0,sb=+b.overall||0;return sa>sb||(sa===sb&&ga<gb)}
+async function reviseToTen(start){
+  const el=$("#aReport");const ctl=new AbortController();const ctx=start.ctx;
+  el.scrollIntoView({behavior:"smooth",block:"start"});
+  const rounds=[{label:"Original",score:+start.res.overall||0,gaps:gapsOf(start.res,start.text,ctx).length,coh:cohOf(start.res)}];
+  let best={text:start.text,audit:start.res,changes:[],core:"",gaps:rounds[0].gaps,round:0};
+  let bestAttempt=null,rejected=null;
+  const roundsHTML=()=>`<ul class="rounds">${rounds.map(r=>`<li><span>${esc(r.label)}${r.kept===false?` <span class="note">(${r.over?`${r.over} lines, over the ${MOOD_MAX}-line limit`:(r.added||[]).length?"added facts you did not have: "+esc(r.added.join(", ")):r.far?"too different from your script":"scored lower"}, thrown out)</span>`:''}${r.share!=null?` <span class="note">· keeps ${Math.round(r.share*100)}% of your words</span>`:''}</span><span class="note">coherence ${r.coh}/10 · ${r.gaps} gaps</span><b>${r.score}/100</b></li>`).join("")}</ul>`;
+  const log=status=>{el.innerHTML=`<h2>Revising to 10/10</h2><div class="setline">Writing for: <span data-setline>${esc(setupSummary(SETUP))}</span></div>${roundsHTML()}<div class="thinking"><span class="spin"></span><span class="tx">${esc(status)}</span><button class="btn ghost small" id="stopRev">Stop</button></div>`;$("#stopRev").onclick=()=>ctl.abort()};
+  try{
+    for(let round=1;round<=3;round++){
+      const gaps=gapsOf(best.audit,best.text,ctx);
+      if(!gaps.length)break;
+      log(`Round ${round}: rewriting the scene and hook…`);
+      const rv=await askJSON(revisePrompt(best.text,best.audit,ctx,gaps,round,rejected,start.text),true,ctl,n=>{const t=el.querySelector(".tx");if(t)t.textContent=`Round ${round}: rewriting… ${n.toLocaleString()} characters`});
+      if(!rv||!rv.revised)throw {code:"invalid_json"};
+      const ntext=String(rv.revised).trim();
+      log(`Round ${round}: a fresh audit is re-scoring it…`);
+      const naudit=await askJSON(auditPrompt(ntext,{...ctx,scope:"none"}),ctx.deep,ctl);
+      const ng=gapsOf(naudit,ntext,ctx).length;
+      const share=ctx.mode==="campaign"?1:keptShare(start.text,ntext);
+      const tooFar=share<(MIN_KEEP[SETUP.depth||"keep"]||0);
+      const added=ctx.mode==="campaign"?[]:newFacts(start.text,(ctx.brief||"")+"\n"+(SETUP.highlights||""),ntext);
+      const overMood=isMood(ctx.type)&&moodLines(ntext)>MOOD_MAX;
+      const kept=!tooFar&&!added.length&&!overMood&&better(naudit,best.audit,ng,best.gaps);
+      rounds.push({label:`Round ${round}`,score:+naudit.overall||0,gaps:ng,coh:cohOf(naudit),kept,far:tooFar,share,added,over:overMood?moodLines(ntext):0});
+      if(!versions.length)versions=[{label:"Original",text:start.text,score:+start.res.overall||0}];
+      versions.push({label:`Round ${round}${kept?"":" (thrown out)"}`,text:ntext,score:+naudit.overall||0});
+      const att={text:ntext,audit:naudit,changes:rv.changes||[],core:rv.core_idea||"",gaps:ng,round};
+      if(!tooFar&&!added.length&&!overMood&&(!bestAttempt||(+naudit.overall||0)>(+bestAttempt.audit.overall||0)))bestAttempt=att;
+      if(kept){best=att;rejected=null}
+      else rejected=overMood?{score:+naudit.overall||0,why:`it ran to ${moodLines(ntext)} lines; a moodboard is ${MOOD_MAX} lines maximum`}:added.length?{score:+naudit.overall||0,why:`it added facts that are not in the client's script: ${added.join(", ")}. Remove every one and add no new facts`}:tooFar?{score:+naudit.overall||0,why:`it drifted too far from the client's script, keeping only ${Math.round(share*100)} percent of the original wording. Stay much closer to the original lines`}:{score:+naudit.overall||0,why:(naudit.why_it_wont_work||[]).slice(0,3).map(w=>w.reason).join("; ")};
+    }
+  }catch(e){
+    if(rounds.length===1){el.innerHTML=`<p class="err">${esc(errMsg(e))}</p>`;return}
+    toast(e?.code==="cancelled"?"Stopped. Showing the best version so far.":errMsg(e));
+  }
+  const noWin=best.round===0&&bestAttempt;
+  const show=noWin?bestAttempt:best;
+  const text=show.text,audit=show.audit;
+  const left=gapsOf(audit,text,ctx);
+  const isReel=/reel/i.test(ctx.type||"")&&ctx.mode==="script";
+  const lc=isReel?lenCheck(text,SETUP):null;
+  const header=`<h2>Revised script</h2>
+    <div class="setline">Written for: <span>${esc(setupSummary(SETUP))}</span></div>
+    ${best.round===0&&!bestAttempt&&rounds.length>1?`<div class="banner short"><b>Every rewrite was thrown out</b>, so this is your original script. ${rounds.some(r=>(r.added||[]).length)?"The rewrites added facts you did not give. ":""}${rounds.some(r=>r.far)?"The rewrites changed too much of it. ":""}Try a different hook pillar or genre, or switch "How much to change" to "Same idea and story" and revise again.</div>`:""}
+    ${noWin?`<div class="banner short"><b>No rewrite beat your original</b> (${start.res.overall}/100). This is the strongest attempt at ${audit.overall}/100. Try a different hook pillar or format in the production setup and revise again.</div>`:""}
+    <div id="finalBlock"></div><div class="tally" id="finalTally"></div>
+    <div class="actions"><button class="btn small" id="finalCopy">Copy script</button><button class="btn ghost small" id="finalShots">Add visuals / shot list</button><button class="btn ghost small" id="finalLoad">Load into editor</button></div>
+    <div id="finalShotsOut"></div>
+    ${show.core?`<p class="note" style="margin-top:12px"><b>Core idea:</b> ${esc(show.core)}</p>`:""}
+    ${(show.changes||[]).length?`<p class="note"><b>Changed:</b> ${show.changes.map(c=>esc(typeof c==="string"?c:c.change)).join(" · ")}</p>`:""}
+    <h3>Rounds</h3>${roundsHTML()}
+    ${left.length?`<details class="note"><summary>${left.length} gaps left. Press Revise to 10/10 again, or give feedback below.</summary><ul style="margin:8px 0 0;padding-left:18px">${left.slice(0,10).map(g=>`<li>${esc(g)}</li>`).join("")}</ul></details>`:`<div class="banner win"><b>10/10 on every parameter</b>, confirmed by a fresh audit.</div>`}
+    ${versionsHTML()}
+    <h3 style="margin-top:28px">Audit of this version</h3>`;
+  renderAudit(el,{text,res:audit,ctx},{header,hideSuggestion:true,after:()=>{
+    const finTally=t=>{const rs=scan(t);const lc=isReel?lenCheck(t,SETUP):isMood(ctx.type)?{pill:`<span class="pill ${moodLines(t)>MOOD_MAX?'b':'ok'}">${moodLines(t)} of ${MOOD_MAX} lines</span>`}:null;$("#finalTally").innerHTML=(ctx.mode==="script"&&t!==start.text?`<span class="pill">Keeps ${Math.round(keptShare(start.text,t)*100)}% of your words</span>`:"")+(lc?lc.pill:"")+tallyHTML(rs)};
+    const cm=mountCommentable($("#finalBlock"),text,ctx,start.text,t=>{finTally(t);versions.push({label:"Line fixes",text:t,score:"–"});lastAudit={text:t,res:audit,ctx}});finTally(text);
+    $("#finalCopy").onclick=()=>copyText(cm.get());
+    $("#finalShots").onclick=()=>shotList(cm.get(),$("#finalShotsOut"));
+    $("#finalLoad").onclick=()=>{loadIntoAudit(cm.get(),ctx.mode);toast("Loaded. Edit it, then audit again.")};
+    bindVersions(el,ctx.mode);
+  }});
+  lastAudit={text,res:audit,ctx};
+  sheetRows.push({kind:ctx.mode==="campaign"?"Campaign (revised)":"Script (revised)",title:"Revised: "+(ctx.brief||ctx.type),pillar:"",format:ctx.type,text,why:`Score ${audit.overall}/100. `+(audit.why_it_works||[]).map(w=>w.point).join(" ")});
+  $("#wCsv").disabled=false;
+}
+
+/* ---------- Comment on lines, fix only those ---------- */
+function mountCommentable(box,initial,ctx,origText,onChange){
+  let lines=String(initial).split("\n"),notes={},changed=new Set(),openId=null,history=[];
+  const cur=()=>lines.join("\n");
+  function render(){
+    const n=Object.keys(notes).length;
+    box.innerHTML=`<p class="note" style="margin:0 0 6px">Tap any line to leave a comment. Only the lines you comment on get rewritten.</p><div class="cscript">${lines.map((ln,i)=>{
+      if(!ln.trim())return `<div class="cl gap"></div>`;
+      const mk=markHTML(ln,scan(ln).hits);
+      return `<button type="button" class="cl${notes[i]!=null?" has":""}${changed.has(i)?" chg":""}" data-i="${i}" aria-label="Comment on line ${i+1}">${mk}</button>${notes[i]!=null&&openId!==i?`<div class="cnote"><span><b>Comment:</b> ${esc(notes[i])}</span><button type="button" class="btn ghost small" data-rm="${i}">Remove</button></div>`:""}${openId===i?`<div class="cedit"><label for="cn_${i}" style="margin:0">Comment on this line</label><textarea id="cn_${i}">${esc(notes[i]||"")}</textarea><div class="actions" style="margin:0"><button type="button" class="btn small" data-save="${i}">Save comment</button><button type="button" class="btn ghost small" data-cancel>Cancel</button></div></div>`:""}`}).join("")}</div>
+    <div class="cbar"><button type="button" class="btn gold" data-fix ${n?"":"disabled"}>${n?`Fix ${n} commented line${n>1?"s":""}`:"Comment on a line to fix it"}</button>${history.length?`<button type="button" class="btn ghost small" data-undo>Undo last fix</button>`:""}<span class="note" data-st></span></div>`;
+    box.querySelectorAll(".cl[data-i]").forEach(b=>b.onclick=()=>{openId=+b.dataset.i;render();const t=box.querySelector("textarea");if(t)t.focus()});
+    box.querySelectorAll("[data-save]").forEach(b=>b.onclick=()=>{const i=+b.dataset.save,v=box.querySelector(`#cn_${i}`).value.trim();if(v)notes[i]=v;else delete notes[i];openId=null;render()});
+    box.querySelectorAll("[data-cancel]").forEach(b=>b.onclick=()=>{openId=null;render()});
+    box.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{delete notes[+b.dataset.rm];render()});
+    const u=box.querySelector("[data-undo]");if(u)u.onclick=()=>{const h=history.pop();lines=h.lines;changed=new Set();notes={};render();onChange&&onChange(cur())};
+    box.querySelector("[data-fix]").onclick=fix;
+  }
+  async function fix(){
+    const ids=Object.keys(notes).map(Number).sort((a,b)=>a-b);if(!ids.length)return;
+    const st=box.querySelector("[data-st]"),btn=box.querySelector("[data-fix]");btn.disabled=true;st.innerHTML='<span class="spin" style="display:inline-block;vertical-align:middle"></span> Fixing only those lines…';
+    const camp=ctx.mode==="campaign";
+    const prompt=`You are editing a ${camp?"campaign":"reel script"}. The client left comments on specific lines. Rewrite ONLY those lines. Every other line stays exactly as it is.
+${rulesBlock(ctx.mode)}
+${camp?"":productionBlock(SETUP,ctx.type)}
+${camp?"":NO_NEW_FACTS}
+FULL SCRIPT, numbered (for context):
+${lines.map((l,i)=>`${i}: ${l}`).join("\n")}
+COMMENTS (line number: comment):
+${ids.map(i=>`${i}: "${lines[i]}" -> ${notes[i]}`).join("\n")}
+Rules:
+- Follow each comment exactly. Fix that line only, so it still flows with the lines before and after it.
+- Keep the line's layout: its timestamp, speaker label or prefix (ON SCREEN:, CAPTION:, CTA:) unless the comment asks to change it.
+- ${isMood(ctx.type)?`Each line stays one line. The moodboard must stay at ${MOOD_MAX} lines or fewer.`:"A line may become 1 to 3 lines if the comment needs it, never more."}
+- Zero banned words, zero machine language, zero em dashes, zero contractions. No new facts.
+Reply with only JSON: {"fixes":[{"line":0,"new_lines":["the rewritten line"],"note":"what you did, max 8 words"}]}`;
+    let res;try{const ctl=new AbortController();res=await askJSON(prompt,true,ctl)}catch(e){st.textContent=errMsg(e);btn.disabled=false;return}
+    const fixes=(res&&res.fixes||[]).filter(f=>ids.includes(+f.line)&&Array.isArray(f.new_lines)&&f.new_lines.length);
+    if(!fixes.length){st.textContent="Claude's answer could not be used. Press Fix again.";btn.disabled=false;return}
+    history.push({lines:[...lines]});
+    const byLine=new Map(fixes.map(f=>[+f.line,f.new_lines.slice(0,3).map(String)]));
+    const out=[],chg=new Set();
+    lines.forEach((l,i)=>{if(byLine.has(i)){for(const nl of byLine.get(i)){chg.add(out.length);out.push(nl)}}else out.push(l)});
+    lines=out;changed=chg;notes={};openId=null;
+    render();
+    const added=camp?[]:newFacts(origText,(ctx.brief||"")+"\n"+(SETUP.highlights||""),cur());
+    const msg=box.querySelector("[data-st]");
+    msg.innerHTML=`${fixes.length} line${fixes.length>1?"s":""} fixed (green). Everything else is unchanged.${added.length?` <b style="color:var(--proof)">It added facts you did not give: ${esc(added.join(", "))}. Comment on that line or undo.</b>`:""}`;
+    onChange&&onChange(cur());
+  }
+  render();
+  return {get:cur};
+}
+
+/* ---------- Visuals, only on request ---------- */
+async function shotList(text,out){
+  const st=SETUP;
+  const prompt=`You are a director. Write the shot list for this ${st.len}-second script, for this production: ${castLine(st)}.
+${st.prod==="ai"?"Each shot must be generable by AI video: one subject, one action, one camera move, consistent character descriptions, no text in frame, no real people or logos.":st.prod==="stock"?"Only use shots that exist in stock libraries. Mark anything that needs client footage as [client footage].":"Shots the team can film on a normal real estate shoot."}
+Change the visual every 2 to 4 seconds. The first shot must stop the scroll on its own.${skillsBlock()}
+SCRIPT:
+"""${text.slice(0,12000)}"""
+Reply with only JSON: {"shots":[{"t":"0-3s","shot":"max 15 words","text_on_screen":"same words as the script or empty"}]}`;
+  const res=await ask(prompt,false,out,"Planning the shots…");
+  if(!res)return;
+  const rows=(res.shots||[]);
+  const plain=rows.map(r=>`[${r.t}] ${r.shot}${r.text_on_screen?` | ON SCREEN: ${r.text_on_screen}`:""}`).join("\n");
+  out.innerHTML=`<h3>Shot list</h3><div class="tw"><table class="shots"><thead><tr><th>Time</th><th>Shot</th><th>On screen</th></tr></thead><tbody>${rows.map(r=>`<tr><td class="n">${esc(r.t)}</td><td>${esc(r.shot)}</td><td>${esc(r.text_on_screen)}</td></tr>`).join("")}</tbody></table></div><div class="actions"><button class="btn ghost small">Copy shot list</button></div>`;
+  out.querySelector("button").onclick=()=>copyText(plain);
+}
+
+/* ---------- Write ---------- */
+let sheetRows=[];let writeMode="script";
+function setWriteMode(m){
+  writeMode=m;const F=m==="festive";
+  $("#wmScript").setAttribute("aria-pressed",m==="script");$("#wmCamp").setAttribute("aria-pressed",m==="campaign");$("#wmFest").setAttribute("aria-pressed",F);
+  $("#wScriptFields").hidden=m!=="script";$("#wCampFields").hidden=m!=="campaign";$("#wFestFields").hidden=!F;$("#wPersonaWrap").hidden=F;
+  $("#wRun").textContent=m==="script"?"Write scripts":m==="campaign"?"Write campaigns":"Write festive copies";
+  $("#wNicheLabel").textContent=m==="script"?"Niche":m==="campaign"?"Project":"Brand or project";
+  $("#wTopicLabel").textContent=m==="script"?"Topic":m==="campaign"?"Differentiator or product truth":"Angle or message (optional)";
+  $("#wExtra").placeholder=m==="script"?"Paste existing scripts here to get revised versions instead of new ones.":m==="campaign"?"Paste project facts and competing launches.":"Paste offer details or past festive posts to revise.";
+  $("#wExtraLabel").textContent=m==="script"?"Anything else (existing content to revise, facts, project data)":m==="campaign"?"Project facts and competition (configurations, price per sq ft, distances, RERA, competing launches)":"Anything else (offer details, past festive posts to revise, things to avoid)";
+}
+$("#wmScript").onclick=()=>setWriteMode("script");$("#wmCamp").onclick=()=>setWriteMode("campaign");$("#wmFest").onclick=()=>setWriteMode("festive");
+$("#fFest").onchange=()=>{$("#fOtherWrap").hidden=$("#fFest").value!=="other";if(!$("#fOtherWrap").hidden)$("#fOther").focus()};
+function festPersonaBlock(){
+  const sel=$("#fPersonaSel").value,txt=$("#fPersona").value.trim();
+  let out=personaBlock(sel);
+  if(txt)out+=`\nBRAND PERSONA FROM THE CLIENT (top priority for voice; match it exactly): """${txt.slice(0,8000)}"""\n`;
+  return out;
+}
+
+$("#wRun").onclick=async()=>{
+  const camp=writeMode==="campaign",fest=writeMode==="festive";
+  let prompt;
+  const extra=$("#wExtra").value.trim();
+  if(fest){
+    if(!$("#fPersonaSel").value&&$("#fPersona").value.trim().length<20){toast("Add the brand persona first. Pick a saved one or describe it.");$("#fPersona").focus();return}
+    const festName=$("#fFest").value==="other"?$("#fOther").value.trim():$("#fFest").value;
+    if(!festName){toast("Type the occasion name");$("#fOther").focus();return}
+    const formats=[...document.querySelectorAll("#fFormats input:checked")].map(i=>i.value);
+    if(!formats.length){toast("Pick at least one copy format");return}
+    const n=+$("#fCount").value;
+    const intent={greeting:"Pure greeting. No selling, no project specs, no offer. The brand name appears once at most, as a sign-off.",soft:"A greeting first. The brand appears gently, through its values or a small product truth, never as a pitch.",offer:"A festive offer or launch tie-in. The greeting leads, the offer follows in one clear line. Use only offer details given below; otherwise use a marked placeholder like [verify: offer]."}[$("#fIntent").value];
+    prompt=`You are a senior copywriter for Indian brands who writes festive copy that people actually forward. Write festive copies for ${festName}.
+${rulesBlock("script")}
+${festPersonaBlock()}
+BRAND OR PROJECT: ${$("#wNiche").value||"not given"}
+ANGLE OR MESSAGE: ${$("#wTopic").value||"pick the strongest one for this brand and festival"}
+AUDIENCE: ${$("#wAudience").value||"the brand's customers and followers"}
+GOAL: ${$("#wGoal").value}
+CTA: ${$("#wCta").value||"none unless the purpose needs one"}
+LANGUAGE: ${$("#fLang").value}
+PURPOSE: ${intent}
+FORMATS (write ${n} option(s) for each): ${formats.join(" | ")}
+${extra?`EXTRA MATERIAL (if it contains past festive copy, REVISE it instead of starting fresh):\n"""${extra.slice(0,20000)}"""`:""}
+FESTIVE RULES: Find one true, specific ritual, object, sound, food or family moment of ${festName} and connect it to what this brand stands for. No generic wishes like "wishing you joy and prosperity", "may this festival light up your life", "happy and prosperous", "celebrate with your loved ones". No festival cliches stacked together (diyas, sweets, crackers, lights in one line). Be culturally accurate and respectful; never trivialise rituals or religion; no firecracker glorification. The copy must sound like the persona, not like a greeting card. Real estate: no guaranteed returns, no "auspicious time to invest" pressure. Hoarding headlines 4 words or fewer. Self-check every line against banned words, format bans (no em dashes, no contractions) and machine language before replying.
+Reply with only a JSON array with one object:
+{"kind":"festive","title":"max 6 words","festival":"${festName}","insight":"the festival truth you built on, one sentence","big_idea":"one plain sentence linking the festival to the brand","persona_fit":"one sentence on how the voice matches the persona",
+"copies":[{"format":"","option":1,"headline":"","body":"the copy itself; for a reel use [0-3s] style timestamps; for a carousel use Slide 1: ... lines","caption":"if it is a social post or reel","visual":"one line art direction"}],
+"hashtags":[],"save_reason":"max 12 words","share_reason":"max 12 words","why_it_could_go_viral":"2 sentences","why_it_could_fail":"1 sentence"}`;
+  }else if(camp){
+    const n=+$("#wRoutes").value;const media=[...document.querySelectorAll("#wMedia input:checked")].map(i=>i.value);
+    prompt=`You are a real estate campaign creative director. Create ${n} distinct real estate campaign route(s).
+${rulesBlock("campaign")}
+${personaBlock($("#wPersona").value)}
+PROJECT: ${$("#wNiche").value}
+DIFFERENTIATOR / PRODUCT TRUTH: ${$("#wTopic").value}
+MICROMARKET: ${$("#wMarket").value}
+AUDIENCE: ${$("#wAudience").value}
+GOAL: ${$("#wGoal").value}
+CTA: ${$("#wCta").value}
+MEDIA: ${media.join(", ")||"Hoardings and unipoles"}
+${extra?`FACTS AND COMPETITION (if it contains an existing campaign, REVISE it using the rulebook):\n"""${extra.slice(0,20000)}"""`:""}
+Method: find a differentiator only this project can claim within 10 km, validate it against the competition, layer it across Community, Legacy, Growth and Price appreciation, then adapt it to the micromarket. Every headline 4 words or fewer. The route must not be confusing: one look, one meaning, every execution saying the same single thing. Self-check every line against banned words, format bans and machine language before replying.
+Reply with only a JSON array, one object per route:
+{"kind":"campaign","title":"route name","insight":"the buyer tension","big_idea":"one line","proposition":"single-minded proposition","one_line_takeaway":"what a passerby will say it means after one look","differentiator":"why only this project","headlines":["4 words max",""],
+"value_props":{"community":"","legacy":"","growth":"","price_appreciation":""},
+"executions":[{"media":"","headline":"4 words max","support":"one line","visual":""}], // one per medium listed
+"cta":"","compliance_note":"RERA placeholder and claims to verify","why_it_works":"3-4 sentences naming the psychology and the micromarket logic","why_it_could_fail":"the biggest risk and how to guard against it"}`;
+  }else{
+    const kind=$("#wKind").value,n=+$("#wCount").value;
+    const moods=kind==="moodboard"?n:0;
+    const reels=kind==="reel"?n:kind==="carousel"||moods?0:Math.ceil(n/2),cars=moods?0:n-reels;
+    const input={niche:$("#wNiche").value,topic:$("#wTopic").value,target_audience:$("#wAudience").value,goal:$("#wGoal").value,cta:$("#wCta").value,platform:$("#wPlatform").value,duration_seconds:SETUP.len,pillar:$("#wPillar").value};
+    prompt=`You are a senior short-form creative who writes for Meta's ranking system and real viewers: content built to be stopped for, watched to the end, sent to a friend, saved and rewatched. Above everything, each piece must make complete sense as one clear idea told in one flowing voice.
+${rulesBlock("script")}
+${productionBlock(SETUP,moods?"Moodboard script":"Reel script")}
+${personaBlock($("#wPersona").value)}
+INPUT: ${JSON.stringify(input)}
+${extra?`EXTRA MATERIAL (if it contains existing scripts or carousels, REVISE those using the rulebook instead of starting fresh, keeping their core idea where it is strong):\n"""${extra.slice(0,20000)}"""`:""}
+${moods?`Write ${moods} moodboard script(s). Each is one distinct mood, ${MOOD_MAX} lines maximum, in HEADER/SECONDARY pairs.
+Reply with only a JSON array of items: {"kind":"moodboard","title":"max 6 words","big_idea":"one plain sentence","genre":"","script_text":"the moodboard as plain text: HEADER: ... / SECONDARY: ... pairs, one per line, ${MOOD_MAX} lines maximum","save_reason":"max 12 words","share_reason":"max 12 words","why_it_could_go_viral":"2 sentences"}
+Ignore the reel and carousel shapes below.
+`:""}Write ${reels} reel script(s) and ${cars} carousel(s). Each must be one distinct idea, use a different format and verbal hook type where possible, stack at least 2 attention triggers (ideally curiosity + one), and pass every virality rule. Self-check every line against banned words, format bans (no em dashes, no contractions) and machine language before replying.
+Reply with only a JSON array. Reel items:
+{"kind":"reel","title":"max 6 words","pillar":"","format":"","attention_triggers_used":["",""],"hook_pillar":"","big_idea":"one plain sentence, max 15 words",
+"script_text":"the script as plain text in this layout: ${formatSpec(SETUP,false).replace(/"/g,"'").replace(/\n/g," / ")}",
+"save_reason":"max 12 words","share_reason":"max 12 words","caption":"","cta":"","hashtags":[],
+"why_it_could_go_viral":"2 sentences","why_it_could_fail":"1 sentence"}
+Carousel items:
+{"kind":"carousel","title":"","pillar":"","format":"Carousel","attention_triggers_used":["",""],"hook_pillar":"","big_idea":"",
+"slides":[{"n":1,"role":"Hook","headline":"","body":"max 25 words"${SETUP.visuals?',"visual":""':""}}, … 7 to 10 slides following Hook → Curiosity/Lock-in → Reveal → Re-hook → Actionable Value → Final Insight → CTA],
+"save_reason":"","share_reason":"","caption":"","cta":"","hashtags":[],"why_it_could_go_viral":"2 sentences","why_it_could_fail":"1 sentence"}`;
+  }
+  const holder=document.createElement("div");$("#wList").prepend(holder);
+  const em=$("#wList .empty");if(em)em.remove();
+  const res=await ask(prompt,$("#wDeep").checked,holder,camp?"Finding what only this project can claim…":fest?"Writing in your brand voice…":"Thinking…");
+  if(!res)return;
+  const items=Array.isArray(res)?res:(res.items||[res]);
+  holder.innerHTML="";items.forEach(it=>holder.appendChild(draftCard(it)));
+  $("#wCsv").disabled=false;
+};
+function itemText(it){
+  if(it.kind==="festive")return (it.copies||[]).map(c=>`${c.format}${c.option?` · option ${c.option}`:""}\n${c.headline?`Headline: ${c.headline}\n`:""}${c.body||""}${c.caption?`\nCaption: ${c.caption}`:""}${c.visual?`\nVisual: ${c.visual}`:""}`).join("\n\n")+((it.hashtags||[]).length?`\n\n${it.hashtags.join(" ")}`:"");
+  if(it.kind==="campaign")return `Route: ${it.title}\nInsight: ${it.insight}\nBig idea: ${it.big_idea}\nProposition: ${it.proposition}\nDifferentiator: ${it.differentiator}\nHeadlines: ${(it.headlines||[]).join(" | ")}\nCommunity: ${it.value_props?.community||""}\nLegacy: ${it.value_props?.legacy||""}\nGrowth: ${it.value_props?.growth||""}\nPrice appreciation: ${it.value_props?.price_appreciation||""}\n\n`+(it.executions||[]).map(x=>`${x.media}\nHeadline: ${x.headline}\nSupport: ${x.support}\nVisual: ${x.visual}`).join("\n\n")+`\n\nCTA: ${it.cta||""}\n${it.compliance_note||""}`;
+  if(it.kind==="carousel")return (it.slides||[]).map(s=>`Slide ${s.n} (${s.role}): ${s.headline}\n${s.body}${s.visual?`\nVISUAL: ${s.visual}`:""}`).join("\n\n")+`\n\nCAPTION: ${it.caption||""}\nCTA: ${it.cta||""}`;
+  if(it.script_text)return String(it.script_text)+(/CAPTION:/i.test(it.script_text)?"":`\n\nCAPTION: ${it.caption||""}\nCTA: ${it.cta||""}`);
+  const h=it.hook||{};
+  return (it.voiceover_full?`Voiceover (straight through): ${it.voiceover_full}\n\n`:"")+`Text hook: ${h.text_hook}\nVerbal hook: ${h.verbal_hook}\nVisual hook: ${h.visual_hook}\n\n`+(it.script||[]).map(s=>`[${s.timestamp}] ${s.beat||""}\nVisual: ${s.visual}\nVO: ${s.voiceover}\nOn-screen: ${s.on_screen_text}`).join("\n\n")+`\n\nCaption: ${it.caption||""}\nCTA: ${it.cta||""}`;
+}
+function draftCard(it){
+  const card=document.createElement("article");card.className="card";
+  const text=itemText(it);const sc=scan(text);
+  const kindName=it.kind==="festive"?"Festive":it.kind==="carousel"?"Carousel":it.kind==="campaign"?"Campaign":it.kind==="moodboard"?"Moodboard":"Reel";
+  sheetRows.push({kind:kindName,title:it.title,pillar:it.pillar||"",format:it.format||"",text,why:it.why_it_could_go_viral||it.why_it_works||""});
+  const mk=s=>markHTML(String(s||""),scan(String(s||"")).hits);
+  const wc=s=>String(s||"").trim().split(/\s+/).filter(Boolean).length;
+  let body="";
+  if(it.kind==="festive"){
+    body=`<div class="hooks"><div><b>Festival</b>${esc(it.festival)}</div><div><b>Festival truth</b>${mk(it.insight)}</div>${it.persona_fit?`<div><b>Persona fit</b>${esc(it.persona_fit)}</div>`:""}</div>
+    ${(it.copies||[]).map((c,ci)=>`<div style="margin-top:14px"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><h3 style="margin:0">${esc(c.format)}${c.option?` · option ${esc(c.option)}`:""}</h3><button class="btn ghost small" data-fc="${ci}">Copy</button></div>${c.headline?`<div class="headline-big" style="font-size:24px;margin:8px 0 6px">${mk(c.headline)}</div>`:""}<div class="copyblock">${mk(c.body)}${c.caption?`\n\n${mk(c.caption)}`:""}</div>${c.visual?`<p class="note" style="margin:6px 0 0"><b>Visual:</b> ${esc(c.visual)}</p>`:""}</div>`).join("")}
+    ${(it.hashtags||[]).length?`<p class="note">${esc(it.hashtags.join(" "))}</p>`:""}`;
+  }else if(it.kind==="campaign"){
+    const vp=it.value_props||{};
+    body=`<div class="hooks"><div><b>Insight</b>${mk(it.insight)}</div><div><b>Core idea</b>${mk(it.big_idea)}</div><div><b>Differentiator</b>${mk(it.differentiator)}</div>${it.one_line_takeaway?`<div><b>What a passerby takes away</b>${mk(it.one_line_takeaway)}</div>`:""}</div>
+    <h3>Headlines</h3><div style="display:grid;gap:8px">${(it.headlines||[]).map(h=>`<div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><span class="headline-big">${mk(h)}</span><span class="chip ${wc(h)<=4?'ok':'b'}">${wc(h)} words</span></div>`).join("")}</div>
+    <h3>Value propositions</h3><div class="hooks"><div><b>Community</b>${mk(vp.community)}</div><div><b>Legacy</b>${mk(vp.legacy)}</div><div><b>Growth</b>${mk(vp.growth)}</div><div><b>Price appreciation</b>${mk(vp.price_appreciation)}</div></div>
+    <h3>Executions</h3><div class="tw"><table><thead><tr><th>Media</th><th>Headline</th><th>Support</th><th>Visual</th></tr></thead><tbody>${(it.executions||[]).map(x=>`<tr><td>${esc(x.media)}</td><td style="font-family:var(--f-display);font-size:16px">${mk(x.headline)} <span class="chip ${wc(x.headline)<=4?'ok':'b'}">${wc(x.headline)}w</span></td><td style="font-family:var(--f-copy)">${mk(x.support)}</td><td>${esc(x.visual)}</td></tr>`).join("")}</tbody></table></div>
+    ${it.compliance_note?`<p class="note">${esc(it.compliance_note)}</p>`:""}
+    <h3>Why it works</h3><p style="font-family:var(--f-copy);margin:0">${esc(it.why_it_works)}</p>`;
+  }else if(it.kind==="carousel"){
+    body=`<div class="slides">${(it.slides||[]).map(s=>`<div class="slide"><span class="r">${esc(s.n)} · ${esc(s.role)}</span><span class="h">${mk(s.headline)}</span><span class="bd">${mk(s.body)}</span>${s.visual?`<span class="v">${esc(s.visual)}</span>`:""}</div>`).join("")}</div>`;
+  }else if(it.script_text){
+    body=`<div class="copyblock">${mk(it.script_text)}</div><div class="tally">${it.kind==="moodboard"?`<span class="pill ${moodLines(it.script_text)>MOOD_MAX?'b':'ok'}">${moodLines(it.script_text)} of ${MOOD_MAX} lines</span>`:lenCheck(it.script_text,SETUP).pill}</div><div class="actions"><button class="btn ghost small" data-a="shots">Add visuals / shot list</button></div><div data-shots></div>`;
+  }else{
+    const h=it.hook||{};
+    body=`${it.voiceover_full?`<h3>Voiceover, read straight through</h3><div class="copyblock" style="border-left-color:var(--accent);margin-bottom:12px">${mk(it.voiceover_full)}</div>`:""}<div class="hooks"><div><b>Text hook</b>${mk(h.text_hook)}</div><div><b>Verbal hook · ${esc(h.verbal_hook_type)}</b>${mk(h.verbal_hook)}</div><div><b>Visual hook</b>${esc(h.visual_hook)}</div></div>
+    <div class="tw"><table><thead><tr><th>Time</th><th>Beat</th><th>Visual</th><th>Voiceover</th><th>On screen</th></tr></thead><tbody>${(it.script||[]).map(s=>`<tr><td class="n">${esc(s.timestamp)}</td><td>${esc(s.beat)}</td><td>${esc(s.visual)}</td><td style="font-family:var(--f-copy)">${mk(s.voiceover)}</td><td>${mk(s.on_screen_text)}</td></tr>`).join("")}</tbody></table></div>
+    ${it.loop?`<p class="note"><b>Loop:</b> ${esc(it.loop)}</p>`:""}`;
+  }
+  const te=it.three_elements_check;
+  card.innerHTML=`<header><div><h4>${esc(it.title)}</h4><div class="meta"><span class="chip">${kindName}</span>${it.pillar?`<span class="chip">${esc(it.pillar)}</span>`:""}${it.format&&it.kind!=="campaign"?`<span class="chip">${esc(it.format)}</span>`:""}${it.tone?`<span class="chip">${esc(it.tone)}</span>`:""}${it.hook_pillar?`<span class="chip m">hook: ${esc(it.hook_pillar)}</span>`:""}${(it.attention_triggers_used||[]).map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div></div><div class="tally" style="margin:0">${tallyHTML(sc)}</div></header>
+  ${it.big_idea&&it.kind!=="campaign"?`<p style="font-family:var(--f-copy);font-style:italic;margin:6px 0 12px">${esc(it.big_idea)}</p>`:""}
+  ${body}
+  ${te?`<h3>Three elements</h3><div class="hooks"><div><b>Information</b>${esc(te.information)}</div><div><b>Emotion</b>${esc(te.emotion)}</div><div><b>Entertainment</b>${esc(te.entertainment)}</div></div>`:""}
+  ${it.save_reason||it.share_reason?`<div class="hooks"><div><b>Why they will save it</b>${esc(it.save_reason)}</div><div><b>Why they will share it</b>${esc(it.share_reason)}</div></div>`:""}
+  ${it.kind!=="campaign"&&it.kind!=="festive"&&!it.script_text?`<h3>Caption</h3><div class="copyblock">${mk(it.caption)}\n\n${mk(it.cta)}\n${esc((it.hashtags||[]).join(" "))}</div>`:""}
+  ${it.kind!=="campaign"?`${(it.hashtags||[]).length&&it.script_text?`<p class="note">${esc(it.hashtags.join(" "))}</p>`:""}
+  <h3>Why it could go viral</h3><p style="font-family:var(--f-copy);margin:0">${esc(it.why_it_could_go_viral)}</p>`:""}
+  ${it.why_it_could_fail?`<h3>Why it could fail</h3><p class="fail" style="font-family:var(--f-copy);margin:0">${esc(it.why_it_could_fail)}</p>`:""}
+  <div class="actions"><button class="btn small" data-a="audit">Audit this</button><button class="btn ghost small" data-a="fb">Give feedback</button><button class="btn ghost small" data-a="copy">Copy text</button><button class="btn ghost small" data-a="json">Copy JSON</button></div>
+  <div data-fb hidden><label>Your feedback on this draft</label><textarea rows="3" style="min-height:80px" placeholder="Write your feedback"></textarea>
+  <div class="actions" style="margin-top:8px"><button class="btn small" data-a="fbgo">Revise with my feedback</button></div><div data-fbout></div></div>`;
+  card.querySelector('[data-a="audit"]').onclick=()=>{
+    const mode=it.kind==="campaign"?"campaign":"script";loadIntoAudit(text,mode);
+    if(mode==="script")$("#aType").value=it.kind==="festive"?"Caption / post":it.kind==="carousel"?"Carousel":it.kind==="moodboard"?"Moodboard script":"Reel script";
+    if(mode==="campaign")$("#aBrief").value=$("#wMarket").value;
+    $("#aPersona").value=it.kind==="festive"?$("#fPersonaSel").value:$("#wPersona").value;$("#aRun").click()};
+  card.querySelector('[data-a="fb"]').onclick=()=>{const b=card.querySelector("[data-fb]");b.hidden=!b.hidden;if(!b.hidden)b.querySelector("textarea").focus()};
+  card.querySelector('[data-a="fbgo"]').onclick=async()=>{
+    const fb=card.querySelector("[data-fb] textarea").value.trim();if(!fb){toast("Write your feedback first");return}
+    const camp=it.kind==="campaign";
+    const prompt=`You are the ${camp?"creative director":it.kind==="festive"?"senior festive copywriter":"senior creative"}. The client gave feedback on this draft. Revise it.
+${rulesBlock(camp?"campaign":"script")}
+${it.kind==="festive"?festPersonaBlock():personaBlock($("#wPersona").value)}
+CURRENT DRAFT (JSON): ${JSON.stringify(it).slice(0,20000)}
+CLIENT FEEDBACK (top priority, follow it exactly):
+"""${fb.slice(0,6000)}"""
+Apply every point. Change only what the feedback asks for, plus anything needed to keep every rule passing. If a point would break a banned-word, format-ban, machine-language or compliance rule, follow its intent in a compliant way. Keep the same structure${camp?" (headlines 4 words max, not confusing)":it.kind==="festive"?" (same formats and options, same festival, same brand persona)":` (the ${SETUP.len}s beats and word budget, or the carousel slide order)`}.${camp||it.kind==="festive"?"":"\n"+productionBlock(SETUP)}
+Reply with only one JSON object in exactly the same shape as the current draft, plus "feedback_changes":[{"feedback_point":"","change":""}].`;
+    const out=card.querySelector("[data-fbout]");
+    const res=await ask(prompt,$("#wDeep").checked,out,"Applying your feedback…");
+    if(!res||typeof res!=="object")return;
+    res.kind=res.kind||it.kind;
+    const fresh=draftCard(res);
+    const note=document.createElement("div");note.className="banner short";note.style.cssText="background:var(--chip);color:var(--ink)";
+    note.innerHTML=`<b>Revised with your feedback:</b> ${esc(fb)}${(res.feedback_changes||[]).length?`<ul style="margin:8px 0 0;padding-left:18px">${res.feedback_changes.map(c=>`<li><b>${esc(c.feedback_point)}</b>: ${esc(c.change)}</li>`).join("")}</ul>`:""}`;
+    fresh.prepend(note);
+    card.replaceWith(fresh);fresh.scrollIntoView({behavior:"smooth",block:"start"});
+  };
+  card.querySelector('[data-a="copy"]').onclick=()=>copyText(text);
+  card.querySelectorAll("[data-fc]").forEach(b=>b.onclick=()=>{const c=(it.copies||[])[+b.dataset.fc]||{};copyText([c.headline,c.body,c.caption].filter(Boolean).join("\n\n"))});
+  const sb=card.querySelector('[data-a="shots"]');if(sb)sb.onclick=()=>shotList(it.script_text,card.querySelector("[data-shots]"));
+  card.querySelector('[data-a="json"]').onclick=()=>copyText(JSON.stringify(it,null,2));
+  return card;
+}
+$("#wCsv").onclick=async()=>{
+  const q=s=>`"${String(s??"").replace(/"/g,'""')}"`;
+  const csv=["Type,Title,Pillar,Format,Content,Why it works"].concat(sheetRows.map(h=>[h.kind,h.title,h.pillar,h.format,h.text,h.why].map(q).join(","))).join("\n");
+  const dl=window.claude?await claude.use("downloads"):null;
+  if(!dl){copyText(csv);return}
+  try{await dl.save({filename:"content-sheet.csv",data:csv});toast("Content sheet saved")}catch(e){if(e?.code!=="cancelled"&&e?.code!=="declined")copyText(csv)}
+};
+
+/* ---------- Persona build ---------- */
+$("#pRun").onclick=async()=>{
+  const name=$("#pName").value.trim(),tx=$("#pTx").value.trim();
+  if(!name){toast("Add a name first");return}
+  if(tx.length<200){toast("Paste at least one transcript or a few captions");return}
+  const prompt=`You are a brand strategist building a reusable voice persona from real material. Study ONLY the material below; you cannot open the links, so treat them as references. Capture how this person actually talks: rhythm, sentence length, language mix (e.g. Hinglish), recurring hooks, story shapes, humour, beliefs, CTA habits, and words they would never use. Do not invent facts about the person. Write sample lines without em dashes or contractions.
+NAME: ${name}
+TYPE: ${$("#pKind").value}
+LINKS: ${$("#pLinks").value.trim()||"none"}
+NOTES: ${$("#pNotes").value||"none"}
+MATERIAL:
+"""${tx.slice(0,60000)}"""
+Reply with only one JSON object:
+{"name":"","type":"","summary":"2 sentences","audience":"","voice":{"tone":"","energy":"","pace":"","language_mix":"","sentence_length":"","signature_phrases":[""],"vocabulary_do":[""],"vocabulary_avoid":[""]},"hook_patterns":[""],"storytelling_patterns":[""],"formats":["from the reel formats list where they fit"],"pillars_mix":{"personal":0,"educational":0,"transformation_lead_gen":0,"trend_jacking":0,"entertainment":0,"authority_thought_leadership":0},"tonality":"serious|concerned|loud_excited|casual|angry","visual_style":"","beliefs_pov":[""],"humor_style":"","cta_style":"","do":[""],"dont":[""],"sample_lines":["3 NEW lines written in their voice, not copied"],"confidence":"high|medium|low","gaps":["what more material would sharpen"],"sources":["the links"]}
+pillars_mix values are percentages summing to 100.`;
+  const res=await ask(prompt,true,$("#pView"),"Studying the voice…");
+  if(!res)return;
+  const p=await savePersona(res);showPersona(p);toast("Persona saved");
+};
+$("#pImport").onclick=()=>{$("#pImportBox").hidden=!$("#pImportBox").hidden};
+$("#pImportGo").onclick=async()=>{try{const p=JSON.parse($("#pImportText").value);if(!p.name)throw 0;const s=await savePersona(p);showPersona(s);$("#pImportBox").hidden=true;$("#pImportText").value="";toast("Persona saved")}catch(e){toast("That is not valid persona JSON. It needs at least a name.")}};
+
+/* ---------- Skills ---------- */
+function saveSkills(){lsSet("vd_skills",SKILLS);if(col){col.doc("skills").set({skills:SKILLS}).catch(()=>toast("Saved in this browser; account save failed."))}renderSkills();renderSetups()}
+function renderSkills(){
+  const el=$("#skList");if(!el)return;
+  el.innerHTML=SKILLS.length?SKILLS.map((k,i)=>`<div class="persona-item" style="cursor:default"><label class="inline"><input type="checkbox" data-sk="${i}" ${k.on?"checked":""}> <b>${esc(k.name)}</b></label><span style="display:flex;gap:8px;align-items:center"><span class="note">${k.body.length.toLocaleString()} chars</span><button type="button" class="btn ghost small" data-skdel="${i}">Remove</button></span></div>`).join(""):'<p class="note" style="margin:0">No skills attached yet.</p>';
+  const on=SKILLS.filter(k=>k.on);const sum=$("#skSum");if(sum)sum.innerHTML=on.length?`On: <b>${esc(on.map(k=>k.name).join(", "))}</b>`:(SKILLS.length?"None switched on":"No skills yet");
+  el.querySelectorAll("[data-sk]").forEach(c=>c.onchange=()=>{SKILLS[+c.dataset.sk].on=c.checked;saveSkills()});
+  el.querySelectorAll("[data-skdel]").forEach(b=>b.onclick=()=>{if(b.dataset.armed){SKILLS.splice(+b.dataset.skdel,1);saveSkills()}else{b.dataset.armed=1;b.textContent="Press again to remove"}});
+}
+let JSZIP_P=null;
+function loadZip(){return JSZIP_P||(JSZIP_P=new Promise((res,rej)=>{const sc=document.createElement("script");sc.src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";sc.onload=()=>res(window.JSZip);sc.onerror=()=>{JSZIP_P=null;rej(0)};document.head.appendChild(sc)}))}
+function skillNameFrom(text,fallback){const m=/^---[\s\S]*?\bname:\s*["']?([^"'\n]+)["']?[\s\S]*?---/m.exec(text);return (m?m[1]:fallback||"My skill").trim()}
+$("#skFile").onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;const msg=$("#skMsg");msg.textContent="Reading…";
+  try{
+    let text="";
+    if(/\.(skill|zip)$/i.test(f.name)){
+      const JSZip=await loadZip();const zip=await JSZip.loadAsync(await f.arrayBuffer());
+      const files=Object.values(zip.files).filter(x=>!x.dir);
+      const main=files.find(x=>/(^|\/)SKILL\.md$/i.test(x.name));
+      if(!main)throw "This file has no SKILL.md inside.";
+      text=await main.async("string");
+      const extras=files.filter(x=>x!==main&&/\.(md|txt)$/i.test(x.name)).slice(0,8);
+      for(const x of extras){text+=`\n\n--- ${x.name} ---\n`+(await x.async("string")).slice(0,8000)}
+    }else text=await f.text();
+    $("#skBody").value=text.slice(0,60000);
+    if(!$("#skName").value.trim())$("#skName").value=skillNameFrom(text,f.name.replace(/\.[^.]+$/,""));
+    msg.textContent="Loaded. Check the name, then press Add skill.";
+  }catch(err){msg.textContent=typeof err==="string"?err:"Could not read that file. Paste the SKILL.md text instead."}
+};
+$("#skAdd").onclick=()=>{
+  const body=$("#skBody").value.trim();if(body.length<20){toast("Attach a file or paste the skill first");return}
+  const name=$("#skName").value.trim()||skillNameFrom(body);
+  SKILLS.push({id:"s_"+Date.now().toString(36),name,body:body.slice(0,60000),on:true});
+  $("#skBody").value="";$("#skName").value="";$("#skFile").value="";$("#skMsg").textContent="";
+  saveSkills();toast(`"${name}" attached and switched on`);
+};
+
+/* ---------- Rulebook render ---------- */
+function renderBanned(){
+  $("#bCats").innerHTML=Object.entries(BANNED).map(([c,ws])=>`<h3>${esc(c)} · ${ws.length}</h3><div class="chips">${ws.map(w=>`<span class="chip b">${esc(w)}</span>`).join("")}</div>`).join("")+
+   `<h3>Your additions · ${customBanned.length}</h3><div class="chips">${customBanned.length?customBanned.map((w,i)=>`<span class="chip b">${esc(w)}<button aria-label="Remove ${esc(w)}" data-i="${i}">×</button></span>`).join(""):'<span class="note">None yet.</span>'}</div>`;
+  $("#bCats").querySelectorAll("button[data-i]").forEach(b=>b.onclick=()=>{customBanned.splice(+b.dataset.i,1);saveSettings();renderBanned();rescanAudit()});
+}
+$("#bAddGo").onclick=()=>{const w=$("#bAdd").value.trim();if(!w)return;if(!customBanned.some(x=>x.toLowerCase()===w.toLowerCase()))customBanned.push(w);$("#bAdd").value="";saveSettings();renderBanned();rescanAudit();toast(`“${w}” banned`)};
+$("#bAdd").addEventListener("keydown",e=>{if(e.key==="Enter")$("#bAddGo").click()});
+$("#mCats").innerHTML=Object.entries(MACHINE_WORDS).map(([c,ws])=>`<h3>${esc(c)} · ${ws.length}</h3><div class="chips">${ws.map(w=>`<span class="chip m">${esc(w)}</span>`).join("")}</div>`).join("")+`<h3>Sentence shapes</h3><div class="chips">${MACHINE_PATTERNS.map(p=>`<span class="chip m">${esc(p.why)}</span>`).join("")}</div>`;
+$("#pillars").innerHTML=SIGNALS.map(o=>`<div class="pillar"><b>${esc(o.name)}</b><p>${esc(o.test)}</p></div>`).join("");
+function renderTimeline(){const bs=beatsFor(SETUP.len);$("#tlHead").textContent=`Reel structure · ${SETUP.len===60?"1 minute":SETUP.len+" seconds"} · about ${WORD_BUDGET[SETUP.len]} spoken words`;
+$("#tl").innerHTML=bs.map(b=>`<span style="flex:${b.e-b.s}" title="${esc(b.job)}">${esc(b.name)}</span>`).join("");
+$("#tll").innerHTML=bs.map(b=>`<span style="flex:${b.e-b.s}">${b.s}s</span>`).join("");}
+renderTimeline();
+$("#hookPillars").innerHTML=Object.entries(HOOK_PILLARS).filter(([k])=>k!=="auto").map(([k,v])=>{const i=v.indexOf(":");return `<div class="pillar"><b>${esc(v.slice(0,i))}</b><p>${esc(v.slice(i+1).trim())}</p></div>`}).join("");
+$("#indiaPlay").textContent=INDIA_PLAYBOOK;
+$("#carOrder").innerHTML=CAROUSEL_ORDER.map((c,i)=>`<span class="chip">${i+1}. ${esc(c)}</span>`).join("");
+$("#campOrder").innerHTML=CAMP_STAGES.map((c,i)=>`<span class="chip" title="${esc(c.job)}">${i+1}. ${esc(c.name)}</span>`).join("");
+
+/* ---------- Tabs ---------- */
+let IS_OWNER=false;
+function switchTab(id){if(id==="rules"&&!IS_OWNER)id="audit";document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===id));document.querySelectorAll("section[role=tabpanel]").forEach(s=>s.hidden=s.id!==id);$("#skillsPanel").hidden=!(id==="audit"||id==="write");lsSet("od_tab",id)}
+document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+const hashTab=location.hash.slice(1);const wantTab=["audit","write","persona","rules"].includes(hashTab)?hashTab:lsGet("od_tab","audit");switchTab(wantTab);
+(window.claude?claude.use("user"):Promise.resolve(null)).then(async u=>{IS_OWNER=!!(u&&await u.isOwner().catch(()=>false));$("#rulesTab").hidden=!IS_OWNER;if(IS_OWNER&&wantTab==="rules")switchTab("rules")});
+
+/* ---------- Boot ---------- */
+renderSkills();renderSetups();
+setAuditMode("script");
+renderPersonaSelects();renderPersonaList();renderBanned();rescanAudit();showPersona(personas[0]||null);
+initStore();
+</script>
+
+</body></html>
